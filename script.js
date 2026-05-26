@@ -9,7 +9,17 @@ document.getElementById('btn-theme').addEventListener('click', cambiarTema);
 function cambiarTema() {
     const body = document.body;
     const current = body.getAttribute('data-theme');
-    body.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
+    const nuevoTema = current === 'dark' ? 'light' : 'dark';
+    
+    body.setAttribute('data-theme', nuevoTema);
+
+    // Si ya hay una gráfica dibujada, la volvemos a renderizar con los nuevos colores
+    const funcInput = document.getElementById('ent-func').value;
+    if (myChart && funcInput) {
+        // Obtenemos la raíz actual guardada en el dataset de la gráfica para no perderla
+        const raizActual = myChart.data.datasets[1].data[0].x;
+        renderizarGrafica(funcInput, raizActual);
+    }
 }
 
 function limpiarTodo() {
@@ -178,31 +188,68 @@ function renderizarGrafica(funcStr, raiz) {
     const dataPoints = [];
     const isDark = document.body.getAttribute('data-theme') === 'dark';
     
+    // Extraemos los colores reales de tus variables CSS en tiempo real
+    const estiloBody = getComputedStyle(document.body);
+    const colorTextoCSS = estiloBody.getPropertyValue('--text-color').trim();
+    const colorBordeCSS = estiloBody.getPropertyValue('--border').trim();
+    
     for (let x = raiz - 2; x <= raiz + 2; x += 0.05) {
         try { dataPoints.push({ x: x, y: math.evaluate(funcStr, { x: x }) }); } catch (e) {}
     }
+    
     if (myChart) myChart.destroy();
+    
     myChart = new Chart(ctx, {
         type: 'line',
         data: {
             datasets: [{
-                label: 'f(x)', data: dataPoints, borderColor: isDark ? '#ADFF2F' : '#6B8E23', borderWidth: 2, pointRadius: 0, fill: false
+                label: 'f(x)', 
+                data: dataPoints, 
+                borderColor: isDark ? '#ADFF2F' : '#6B8E23', 
+                borderWidth: 2, 
+                pointRadius: 0, 
+                fill: false
             }, {
-                label: 'Raíz', data: [{ x: raiz, y: 0 }], backgroundColor: '#D35400', pointRadius: 8, showLine: false
+                label: 'Raíz', 
+                data: [{ x: raiz, y: 0 }], 
+                backgroundColor: '#D35400', 
+                pointRadius: 8, 
+                showLine: false
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
             scales: {
-                x: { type: 'linear', position: 'bottom', grid: { color: isDark ? '#444' : '#ddd' }, ticks: { color: isDark ? '#eee' : '#333' } },
-                y: { grid: { color: isDark ? '#444' : '#ddd' }, ticks: { color: isDark ? '#eee' : '#333' } }
+                x: { 
+                    type: 'linear', 
+                    position: 'bottom', 
+                    grid: { 
+                        color: colorBordeCSS // Líneas de cuadrícula usan tu --border
+                    }, 
+                    ticks: { 
+                        color: colorTextoCSS // Números de escala usan tu --text-color
+                    } 
+                },
+                y: { 
+                    grid: { 
+                        color: colorBordeCSS // Líneas de cuadrícula usan tu --border
+                    }, 
+                    ticks: { 
+                        color: colorTextoCSS // Números de escala usan tu --text-color
+                    } 
+                }
             },
-            plugins: { legend: { labels: { color: isDark ? '#eee' : '#333' } } }
+            plugins: { 
+                legend: { 
+                    labels: { 
+                        color: colorTextoCSS // El texto superior f(x) y Raíz usa tu --text-color
+                    } 
+                } 
+            }
         }
     });
 }
-
 // --- COMPARADOR DE METODOS ---
 function compararMetodos() {
     const funcStr = document.getElementById('ent-func').value;
