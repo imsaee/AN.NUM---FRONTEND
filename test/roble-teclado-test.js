@@ -2,14 +2,15 @@ const mf = document.getElementById('ent-func');
 const outputLatex = document.getElementById('output-latex');
 
 mf.virtualKeyboardMode = 'onfocus';
-
-// Disable MathLive's built-in keypress sounds
 mf.keypressSound = null;
 if (window.mathVirtualKeyboard) {
     window.mathVirtualKeyboard.keypressSound = null;
 }
 
-const sounds = [
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+const audioBuffers = [];
+
+Promise.allSettled([
     'audioaldeano/0.mp3',
     'audioaldeano/1.mp3',
     'audioaldeano/2.mp3',
@@ -18,20 +19,23 @@ const sounds = [
     'audioaldeano/5.mp3.mp3',
     'audioaldeano/6.mp3.mp3',
     'audioaldeano/7.mp3',
-].map(src => {
-    const a = new Audio(src);
-    a.preload = 'auto';
-    return a;
+].map(src =>
+    fetch(src)
+        .then(r => r.arrayBuffer())
+        .then(buf => audioCtx.decodeAudioData(buf))
+)).then(results => {
+    results.forEach(r => { if (r.status === 'fulfilled') audioBuffers.push(r.value); });
 });
 
 function playAldeano() {
-    const a = sounds[Math.floor(Math.random() * sounds.length)];
-    a.currentTime = 0;
-    a.play().catch(() => {});
+    if (audioBuffers.length === 0) return;
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    const source = audioCtx.createBufferSource();
+    source.buffer = audioBuffers[Math.floor(Math.random() * audioBuffers.length)];
+    source.connect(audioCtx.destination);
+    source.start();
 }
 
-// Para teclado físico: keystroke cubre todas las teclas (incluso flechas)
-// Para teclado virtual: input cubre todos los cambios de contenido
 let justKeystroke = false;
 
 mf.addEventListener('keystroke', () => {
