@@ -1,0 +1,64 @@
+:root {
+    --bg-body: #F5F5DC;
+    --bg-inputs: #E8E8D0;
+    --text-color: #4A4A4A;
+    --panel-box: white;
+    --border: #BDBDA0;
+}
+
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: var(--bg-body);
+    color: var(--text-color);
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.panel-inputs {
+    background-color: var(--bg-inputs);
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    min-width: 320px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.input-group,
+.output-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+label {
+    font-size: 0.9rem;
+    color: var(--text-color);
+}
+
+math-field {
+    padding: 8px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--panel-box);
+    color: var(--text-color);
+    font-size: 1rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#output-latex {
+    padding: 8px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--panel-box);
+    font-family: monospace;
+    font-size: 0.85rem;
+    color: var(--text-color);
+    min-height: 32px;
+    word-break: break-all;
+}
