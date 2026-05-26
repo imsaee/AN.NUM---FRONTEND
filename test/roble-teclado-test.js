@@ -7,54 +7,59 @@ if (window.mathVirtualKeyboard) {
     window.mathVirtualKeyboard.keypressSound = null;
 }
 
-// Fix: menú desplegable del teclado virtual en móvil (MathLive Issue #2927)
-// Causa: los botones del toolbar usan 'pointerdown' en vez de 'click'.
-// En táctil el browser genera un click sintético que cierra el menú inmediatamente.
-// Solución: interceptar touchstart/touchend en el toolbar y re-despachar los
-// eventos de forma controlada para que el dropdown pueda abrirse y quedarse abierto.
-if (window.matchMedia('(pointer: coarse)').matches) {
-    // Selectores para el botón de menú/toolbar (varios para cubrir distintas versiones de MathLive)
-    const TOOLBAR_SEL = [
-        '.MLK__toolbar button',
-        '.MLK__menu button',
-        '[part~="toolbar"] button',
-        '[part~="menu"] button',
-        'button[aria-haspopup]',
-    ].join(',');
+// Fix v2: menú desplegable del teclado virtual en móvil (MathLive Issue #2927)
+// Causa real: el toolbar usa 'click' y el menú usa la Popover API (showPopover).
+// En móvil, la secuencia de eventos táctiles genera un pointerdown de compatibilidad
+// DESPUÉS del click, lo que activa el light-dismiss automático del Popover API
+// y cierra el menú inmediatamente.
+// Solución: interceptar el click en el toolbar antes de que llegue a MathLive
+// y re-despacharlo en el siguiente frame de animación, cuando ya no hay
+// eventos de toque pendientes.
+if ('ontouchstart' in window) {
+    const clicksNuestros = new WeakSet();
 
-    function aplicarFixTeclado(root) {
-        // 1. Inyectar touch-action en el shadow DOM para eliminar el delay táctil de 300ms
-        const css = document.createElement('style');
-        css.textContent = 'button,[role="button"]{touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}';
-        root.insertBefore(css, root.firstChild);
+    document.addEventListener('click', (e) => {
+        // Dejar pasar los clicks que nosotros mismos re-despachamos
+        if (clicksNuestros.has(e)) return;
 
-        // 2. En touchstart: bloquear el click sintético que genera el browser
-        root.addEventListener('touchstart', (e) => {
-            if (e.target.closest(TOOLBAR_SEL)) e.preventDefault();
-        }, { passive: false, capture: true });
+        // composedPath() permite ver dentro del shadow DOM
+        const path = e.composedPath();
 
-        // 3. En touchend: disparar manualmente pointerdown → pointerup → click
-        //    para que MathLive procese la acción en el momento correcto (al soltar)
-        root.addEventListener('touchend', (e) => {
-            const btn = e.target.closest(TOOLBAR_SEL);
-            if (!btn) return;
-            e.preventDefault();
-            const opts = { bubbles: true, cancelable: true, pointerType: 'mouse', isPrimary: true };
-            btn.dispatchEvent(new PointerEvent('pointerdown', opts));
-            btn.dispatchEvent(new PointerEvent('pointerup',   opts));
-            btn.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
-        }, { passive: false, capture: true });
-    }
+        // ¿El click ocurrió dentro del teclado virtual?
+        const enVK = path.some(el =>
+            el.tagName === 'MATH-VIRTUAL-KEYBOARD' ||
+            el.classList?.contains('MLK__keyboard')
+        );
+        if (!enVK) return;
 
-    // Esperar a que el elemento del teclado aparezca en el DOM
-    const vkObs = new MutationObserver(() => {
-        const vkEl = document.querySelector('math-virtual-keyboard')
-                  ?? document.querySelector('.MLK__keyboard');
-        if (!vkEl) return;
-        vkObs.disconnect();
-        aplicarFixTeclado(vkEl.shadowRoot ?? vkEl);
-    });
-    vkObs.observe(document.body, { childList: true });
+        // ¿Fue en el toolbar? (El toolbar tiene role="toolbar" según el código fuente)
+        const enToolbar = path.some(el =>
+            el.getAttribute?.('role') === 'toolbar' ||
+            el.classList?.contains('MLK__toolbar') ||
+            el.classList?.contains('MLK__menu')
+        );
+        if (!enToolbar) return;
+
+        // Encontrar el botón exacto que recibió el click
+        const btn = path.find(el => el.tagName === 'BUTTON');
+        if (!btn) return;
+
+        // Bloquar el click original completamente
+        e.stopImmediatePropagation();
+        e.preventDefault();
+
+        // Re-despachar en el siguiente frame: en ese momento ya no hay
+        // eventos de toque pendientes y el Popover API no cerrará el menú
+        requestAnimationFrame(() => {
+            const nuevoClick = new MouseEvent('click', {
+                bubbles: true, cancelable: true, composed: true,
+                clientX: e.clientX, clientY: e.clientY,
+            });
+            clicksNuestros.add(nuevoClick);
+            btn.dispatchEvent(nuevoClick);
+        });
+
+    }, { capture: true }); // capture: true para interceptar antes que MathLive
 }
 
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
