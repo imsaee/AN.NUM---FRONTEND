@@ -75,10 +75,11 @@ Se esperan correcciones y propuestas del equipo de desarrollo sobre las maquetas
 ## Estructura del proyecto
 
 ```
-/
+.
 ├── index.html                  — software principal
 ├── script.js
 ├── style.css
+├── README.md
 ├── metodos-numericos/          — lógica pura, un archivo por método
 │   ├── biseccion.js
 │   ├── regula-falsi.js
@@ -90,5 +91,16 @@ Se esperan correcciones y propuestas del equipo de desarrollo sobre las maquetas
 │   ├── script.js
 │   └── style.css
 └── test/                       — maquetas de prueba
-    └── roble-teclado-test.html
+    ├── audioaldeano/           — sonidos para teclado matemático
+    │   ├── 0.mp3
+    │   ├── 1.mp3
+    │   ├── 2.mp3
+    │   ├── 3.mp3
+    │   ├── 4.mp3
+    │   ├── 5.mp3.mp3
+    │   ├── 6.mp3.mp3
+    │   └── 7.mp3
+    ├── roble-teclado-test.html
+    ├── roble-teclado-test.css
+    └── roble-teclado-test.js
 ```
