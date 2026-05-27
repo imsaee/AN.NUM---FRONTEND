@@ -17,8 +17,8 @@ Promise.allSettled([
     'audioaldeano/2.mp3',
     'audioaldeano/3.mp3',
     'audioaldeano/4.mp3',
-    'audioaldeano/5.mp3.mp3',
-    'audioaldeano/6.mp3.mp3',
+    'audioaldeano/5.mp3',
+    'audioaldeano/6.mp3',
     'audioaldeano/7.mp3',
 ].map(src =>
     fetch(src)

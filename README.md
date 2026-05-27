@@ -97,8 +97,8 @@ Se esperan correcciones y propuestas del equipo de desarrollo sobre las maquetas
     │   ├── 2.mp3
     │   ├── 3.mp3
     │   ├── 4.mp3
-    │   ├── 5.mp3.mp3
-    │   ├── 6.mp3.mp3
+    │   ├── 5.mp3
+    │   ├── 6.mp3
     │   └── 7.mp3
     ├── roble-teclado-test.html
     ├── roble-teclado-test.css
