@@ -62,3 +62,7 @@ math-field {
     min-height: 32px;
     word-break: break-all;
 }
+
+math-field::part(menu-toggle) {
+    display: none;
+}
