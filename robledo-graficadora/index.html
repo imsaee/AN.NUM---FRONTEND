@@ -5,38 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Graficadora</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-
-    <div class="panel-viz">
-        <div id="canvas-container">
-            <canvas id="myChart"></canvas>
-        </div>
+    <div id="canvas-container">
+        <canvas id="myChart"></canvas>
     </div>
-
-    <div class="panel-inputs">
-        <h2>GRAFICADORA</h2>
-
-        <div class="input-group">
-            <label>Función f(x):</label>
-            <input type="text" id="ent-func" value="x^3 - x^2 + 2">
-        </div>
-
-        <div class="input-group">
-            <label>Punto x0 / Lim inf (a):</label>
-            <input type="number" id="ent-a" value="-5" step="any">
-        </div>
-
-        <div class="input-group">
-            <label>Punto x1 / Lim sup (b):</label>
-            <input type="number" id="ent-b" value="5" step="any">
-        </div>
-
-        <button id="btn-graficar">GRAFICAR</button>
-    </div>
-
     <script src="script.js"></script>
 </body>
 </html>
