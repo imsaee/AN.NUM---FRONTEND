@@ -42,14 +42,14 @@ Prueba de teclado virtual matemático para reemplazar el input de texto plano en
 
 **Librería:** [MathLive](https://mathlive.io/) — entrada con soporte LaTeX y teclado virtual táctil.
 
-`test/roble-teclado-test.html`
+https://imsaee.github.io/AN.NUM---FRONTEND/test/roble-teclado-test.html
 
 ### Graficadora interactiva
 Maqueta de graficadora con los métodos numéricos conectados. El HTML es un visualizador sin lógica propia: selecciona el método, lee los parámetros, invoca la función del método correspondiente y muestra el resultado. La gráfica permite zoom y pan.
 
 **Librería:** [JSXGraph](https://jsxgraph.org/) — graficadora interactiva con zoom (rueda del mouse / pinch) y pan (arrastrar), compatible con móvil.
 
-`robledo-graficadora/index.html`
+https://imsaee.github.io/AN.NUM---FRONTEND/robledo-graficadora/index.html
 
 ---
 
