@@ -42,7 +42,7 @@ Prueba de teclado virtual matemático para reemplazar el input de texto plano en
 
 **Librería:** [MathLive](https://mathlive.io/) — entrada con soporte LaTeX y teclado virtual táctil.
 
-https://imsaee.github.io/AN.NUM---FRONTEND/test/roble-teclado-test.html
+🫚 https://imsaee.github.io/AN.NUM---FRONTEND/test/roble-teclado-test.html 🫚
 
 ### Graficadora interactiva
 Propuesta personal de Robledo — no es una tarea asignada, sino una iniciativa propia. La maqueta no tiene estilos de forma intencional: el objetivo fue demostrar que la funcionalidad opera correctamente antes de invertir tiempo en diseño. El estilo es responsabilidad de Sae y Scrivanely; si la propuesta les convence, pueden usarla como referencia o copiarla directamente y darle el aspecto que consideren.
@@ -57,7 +57,7 @@ El HTML actúa como un visualizador sin lógica propia: selecciona el método, l
 >
 > La analogía es la siguiente: si alguien construye una casa sin fabricar los ladrillos, ¿construyó la casa? Sí — el trabajo es la construcción, no la fabricación del material. De la misma forma, usar JSXGraph para visualizar no reemplaza el trabajo de implementar los métodos numéricos; los algoritmos (bisección, Newton-Raphson, etc.) son la casa. La librería es el ladrillo.
 
-https://imsaee.github.io/AN.NUM---FRONTEND/robledo-graficadora/index.html
+🫚 https://imsaee.github.io/AN.NUM---FRONTEND/robledo-graficadora/index.html 🫚
 
 ---
 
