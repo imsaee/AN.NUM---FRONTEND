@@ -4,8 +4,8 @@ document.getElementById('btn-graficar').addEventListener('click', graficar);
 
 function graficar() {
     const funcStr = document.getElementById('ent-func').value;
-    const xMin = parseFloat(document.getElementById('ent-xmin').value);
-    const xMax = parseFloat(document.getElementById('ent-xmax').value);
+    const xMin = parseFloat(document.getElementById('ent-a').value);
+    const xMax = parseFloat(document.getElementById('ent-b').value);
 
     const dataPoints = [];
     const paso = (xMax - xMin) / 200;
