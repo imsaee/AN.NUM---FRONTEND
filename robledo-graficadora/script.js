@@ -30,7 +30,7 @@ document.getElementById('btn-calcular').addEventListener('click', () => {
         let resultado, funcStr;
 
         if (metodo === 'biseccion') {
-            funcStr      = document.getElementById('bis-func').value;
+            funcStr      = document.getElementById('func').value;
             const a      = parseFloat(document.getElementById('bis-a').value);
             const b      = parseFloat(document.getElementById('bis-b').value);
             const tol    = parseFloat(document.getElementById('bis-tol').value);
@@ -38,7 +38,7 @@ document.getElementById('btn-calcular').addEventListener('click', () => {
             resultado    = metodoBiseccion(f, a, b, tol, maxIter);
 
         } else if (metodo === 'regula-falsi') {
-            funcStr      = document.getElementById('rf-func').value;
+            funcStr      = document.getElementById('func').value;
             const a      = parseFloat(document.getElementById('rf-a').value);
             const b      = parseFloat(document.getElementById('rf-b').value);
             const tol    = parseFloat(document.getElementById('rf-tol').value);
@@ -46,7 +46,7 @@ document.getElementById('btn-calcular').addEventListener('click', () => {
             resultado    = metodoRegulaFalsi(f, a, b, tol, maxIter);
 
         } else if (metodo === 'newton') {
-            funcStr      = document.getElementById('nr-func').value;
+            funcStr      = document.getElementById('func').value;
             const x0     = parseFloat(document.getElementById('nr-x0').value);
             const tol    = parseFloat(document.getElementById('nr-tol').value);
             const f      = x => math.evaluate(funcStr, { x });
@@ -54,7 +54,7 @@ document.getElementById('btn-calcular').addEventListener('click', () => {
             resultado    = metodoNewton(f, df, x0, tol, maxIter);
 
         } else if (metodo === 'secante') {
-            funcStr      = document.getElementById('sc-func').value;
+            funcStr      = document.getElementById('func').value;
             const x0     = parseFloat(document.getElementById('sc-x0').value);
             const x1     = parseFloat(document.getElementById('sc-x1').value);
             const tol    = parseFloat(document.getElementById('sc-tol').value);
@@ -62,7 +62,7 @@ document.getElementById('btn-calcular').addEventListener('click', () => {
             resultado    = metodoSecante(f, x0, x1, tol, maxIter);
 
         } else if (metodo === 'punto-fijo') {
-            funcStr      = document.getElementById('pf-func').value;
+            funcStr      = document.getElementById('func').value;
             const x0     = parseFloat(document.getElementById('pf-x0').value);
             const tol    = parseFloat(document.getElementById('pf-tol').value);
             const g      = x => math.evaluate(funcStr, { x });
