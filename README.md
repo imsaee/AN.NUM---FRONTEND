@@ -45,9 +45,17 @@ Prueba de teclado virtual matemático para reemplazar el input de texto plano en
 https://imsaee.github.io/AN.NUM---FRONTEND/test/roble-teclado-test.html
 
 ### Graficadora interactiva
-Maqueta de graficadora con los métodos numéricos conectados. El HTML es un visualizador sin lógica propia: selecciona el método, lee los parámetros, invoca la función del método correspondiente y muestra el resultado. La gráfica permite zoom y pan.
+Propuesta personal de Robledo — no es una tarea asignada, sino una iniciativa propia. La maqueta no tiene estilos de forma intencional: el objetivo fue demostrar que la funcionalidad opera correctamente antes de invertir tiempo en diseño. El estilo es responsabilidad de Sae y Scrivanely; si la propuesta les convence, pueden usarla como referencia o copiarla directamente y darle el aspecto que consideren.
+
+**Esta maqueta no se instala en el software principal hasta recibir aprobación del equipo frontend (Sae, Scrivanely).**
+
+El HTML actúa como un visualizador sin lógica propia: selecciona el método, lee los parámetros, invoca la función del método correspondiente y muestra el resultado. La gráfica permite zoom y pan.
 
 **Librería:** [JSXGraph](https://jsxgraph.org/) — graficadora interactiva con zoom (rueda del mouse / pinch) y pan (arrastrar), compatible con móvil.
+
+> **Nota sobre el uso de software de terceros:** A diferencia del teclado matemático (que es una comodidad de interfaz sin relación directa con la materia), la graficadora sí se vincula con los contenidos de Análisis Numérico. Queda a criterio del equipo y del docente si el uso de JSXGraph es apropiado en este contexto. Vale mencionar que el software principal ya utiliza librerías de terceros (math.js, Chart.js), por lo que no sería el primer caso.
+>
+> La analogía es la siguiente: si alguien construye una casa sin fabricar los ladrillos, ¿construyó la casa? Sí — el trabajo es la construcción, no la fabricación del material. De la misma forma, usar JSXGraph para visualizar no reemplaza el trabajo de implementar los métodos numéricos; los algoritmos (bisección, Newton-Raphson, etc.) son la casa. La librería es el ladrillo.
 
 https://imsaee.github.io/AN.NUM---FRONTEND/robledo-graficadora/index.html
 
