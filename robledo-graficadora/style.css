@@ -1,16 +1,4 @@
-body {
-    margin: 0;
-    background: #F5F5DC;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-}
-
 #jxgbox {
-    width: 90vw;
-    max-width: 800px;
+    width: 800px;
     height: 500px;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
