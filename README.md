@@ -72,7 +72,7 @@ El HTML actúa como un visualizador sin lógica propia: selecciona el método, l
 - Mejorar el estilo del software principal
 - Integrar las funcionalidades de las maquetas una vez revisadas y aprobadas por el equipo completo (Sae, Scrivanely)
 
-Se esperan correcciones y propuestas del equipo de desarrollo sobre las maquetas antes de integrarlas.
+🐷 Se esperan correcciones y propuestas del equipo de desarrollo sobre las maquetas antes de integrarlas. 🐷
 
 ---
 
