@@ -6,33 +6,78 @@
     <title>Graficadora</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsxgraph/1.6.0/jsxgraph.css">
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsxgraph/1.6.0/jsxgraphcore.js"></script>
+    <script src="../metodos-numericos/biseccion.js"></script>
+    <script src="../metodos-numericos/regula-falsi.js"></script>
+    <script src="../metodos-numericos/newton.js"></script>
+    <script src="../metodos-numericos/secante.js"></script>
+    <script src="../metodos-numericos/punto-fijo.js"></script>
 </head>
 <body>
+
     <div id="jxgbox"></div>
 
+    <!-- SELECTOR DE MÉTODO -->
     <div id="selector-metodos">
-        <label>
-            <input type="radio" name="metodo" value="Bisección" checked>
-            Bisección
-        </label>
-        <label>
-            <input type="radio" name="metodo" value="Regula Falsi">
-            Regula Falsi
-        </label>
-        <label>
-            <input type="radio" name="metodo" value="Newton-Raphson">
-            Newton-Raphson
-        </label>
-        <label>
-            <input type="radio" name="metodo" value="Secante">
-            Secante
-        </label>
-        <label>
-            <input type="radio" name="metodo" value="Punto Fijo">
-            Punto Fijo
-        </label>
+        <label><input type="radio" name="metodo" value="biseccion" checked> Bisección</label>
+        <label><input type="radio" name="metodo" value="regula-falsi"> Regula Falsi</label>
+        <label><input type="radio" name="metodo" value="newton"> Newton-Raphson</label>
+        <label><input type="radio" name="metodo" value="secante"> Secante</label>
+        <label><input type="radio" name="metodo" value="punto-fijo"> Punto Fijo</label>
     </div>
+
+    <!-- Bisección -->
+    <div id="params-biseccion">
+        <h3>Bisección</h3>
+        <p>f(x): <input type="text" id="bis-func" value="x^3 - x^2 + 2"></p>
+        <p>a: <input type="number" id="bis-a" value="-2"></p>
+        <p>b: <input type="number" id="bis-b" value="2"></p>
+        <p>Tolerancia: <input type="number" id="bis-tol" value="0.0001" step="any"></p>
+    </div>
+
+    <!-- Regula Falsi -->
+    <div id="params-regula-falsi" hidden>
+        <h3>Regula Falsi</h3>
+        <p>f(x): <input type="text" id="rf-func" value="x^3 - x^2 + 2"></p>
+        <p>a: <input type="number" id="rf-a" value="-2"></p>
+        <p>b: <input type="number" id="rf-b" value="2"></p>
+        <p>Tolerancia: <input type="number" id="rf-tol" value="0.0001" step="any"></p>
+    </div>
+
+    <!-- Newton-Raphson -->
+    <div id="params-newton" hidden>
+        <h3>Newton-Raphson</h3>
+        <p>f(x): <input type="text" id="nr-func" value="x^3 - x^2 + 2"></p>
+        <p>x0: <input type="number" id="nr-x0" value="-2"></p>
+        <p>Tolerancia: <input type="number" id="nr-tol" value="0.0001" step="any"></p>
+    </div>
+
+    <!-- Secante -->
+    <div id="params-secante" hidden>
+        <h3>Secante</h3>
+        <p>f(x): <input type="text" id="sc-func" value="x^3 - x^2 + 2"></p>
+        <p>x0: <input type="number" id="sc-x0" value="-2"></p>
+        <p>x1: <input type="number" id="sc-x1" value="2"></p>
+        <p>Tolerancia: <input type="number" id="sc-tol" value="0.0001" step="any"></p>
+    </div>
+
+    <!-- Punto Fijo -->
+    <div id="params-punto-fijo" hidden>
+        <h3>Punto Fijo</h3>
+        <p>g(x): <input type="text" id="pf-func" value="x^3 - x^2 + 2"></p>
+        <p>x0: <input type="number" id="pf-x0" value="-2"></p>
+        <p>Tolerancia: <input type="number" id="pf-tol" value="0.0001" step="any"></p>
+    </div>
+
+    <!-- RESULTADO -->
+    <div id="display-resultado">
+        <p>Raíz: <strong id="res-raiz">---</strong></p>
+        <p>Iteraciones: <strong id="res-iter">---</strong></p>
+        <p>Error: <strong id="res-error">---</strong></p>
+    </div>
+
+    <button id="btn-calcular">CALCULAR</button>
 
     <script src="script.js"></script>
 </body>
