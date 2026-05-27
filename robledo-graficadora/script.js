@@ -1,6 +1,7 @@
 const board = JXG.JSXGraph.initBoard('jxgbox', {
     boundingbox: [-5, 10, 5, -10],
     axis: true,
+    showCopyright: false,
     zoom: {
         enabled: true,
         wheel: true,
