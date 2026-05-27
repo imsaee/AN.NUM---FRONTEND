@@ -2,9 +2,9 @@ body {
     margin: 0;
     background: #F5F5DC;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
-    height: 100vh;
+    padding: 20px;
 }
 
 #jxgbox {
