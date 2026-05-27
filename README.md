@@ -20,7 +20,11 @@ Calculadora de métodos numéricos para búsqueda de raíces, desarrollada por W
 
 ## Refactor de arquitectura
 
+> **Este refactor es una maqueta — no modifica el software principal.** El `script.js` y el `index.html` originales de Wilson no fueron tocados y siguen funcionando de forma independiente.
+
 Los métodos numéricos que Wilson desarrolló en `script.js` fueron separados en archivos individuales dentro de la carpeta `metodos-numericos/`, un archivo por método. El objetivo es que cada archivo contenga únicamente la lógica matemática, sin ninguna referencia al DOM ni a la interfaz. De esta forma el HTML actúa como un visualizador simple que no piensa — solo llama al método, recibe el resultado y lo muestra.
+
+Estos archivos son los que utiliza la maqueta `robledo-graficadora/` para conectar los métodos con la graficadora interactiva.
 
 ```
 metodos-numericos/
