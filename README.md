@@ -12,7 +12,7 @@ Herramienta de análisis numérico con graficadora interactiva.
 |-------|-----------|--------|---------|
 | 2026-05-31 | `robledo-graficadora` | `823c2f5` — Consola de diagnóstico con historial (`consola.js`) | [ver →](docs/823c2f5.md) |
 
-### Cómo documentar un cambio
+### Marco de trabajo — cómo documentar un cambio
 
 1. Hacer el commit normalmente con `git commit`
 2. Copiar el ID corto del commit (los 7 caracteres que muestra git, ej. `823c2f5`)
