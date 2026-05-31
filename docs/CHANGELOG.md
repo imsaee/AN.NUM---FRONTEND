@@ -2,13 +2,15 @@
 
 ---
 
-## [sin versión] — 2026-05-31
+## `823c2f5` — 2026-05-31
 
 ### robledo-graficadora: consola de diagnóstico
 
 **Archivos modificados:**
-- `robledo-graficadora/index.html` — se agrega `<script src="consola.js">` antes de `script.js`
 - `robledo-graficadora/consola.js` — archivo nuevo
+- `robledo-graficadora/index.html` — agrega `<script src="consola.js">` antes de `script.js`
+- `README.md` — sección bitácora de cambios con tabla y enlace a docs/
+- `docs/CHANGELOG.md` — archivo nuevo (este documento)
 
 **Qué hace:**
 Se agrega una consola de diagnóstico visible en la página de la graficadora. La consola aparece como un `<pre>` al final del body, sin CSS, y acumula un historial de todas las operaciones ejecutadas durante la sesión.

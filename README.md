@@ -10,7 +10,7 @@ Herramienta de análisis numérico con graficadora interactiva.
 
 | Fecha | Componente | Cambio | Detalle |
 |-------|-----------|--------|---------|
-| 2026-05-31 | `robledo-graficadora` | Consola de diagnóstico con historial (`consola.js`) | [ver →](docs/CHANGELOG.md) |
+| 2026-05-31 | `robledo-graficadora` | `823c2f5` — Consola de diagnóstico con historial (`consola.js`) | [ver →](docs/CHANGELOG.md) |
 
 ---
 
