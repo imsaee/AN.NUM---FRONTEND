@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora Gráfica - Métodos Numéricos</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsxgraph/1.6.0/jsxgraph.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsxgraph/1.6.0/jsxgraphcore.js"></script>
+    <script src="../metodos-numericos/biseccion.js"></script>
+    <script src="../metodos-numericos/regula-falsi.js"></script>
+    <script src="../metodos-numericos/newton.js"></script>
+    <script src="../metodos-numericos/secante.js"></script>
+    <script src="../metodos-numericos/punto-fijo.js"></script>
+</head>
+<body>
+    
+<div class="main-container">
+    <div class="header">
+        <h1> Calculadora Gráfica</h1>
+        <p>Métodos Numéricos para encontrar raíces de funciones</p>
+    </div>
+
+    <div class="content">
+        <!-- GRÁFICA -->
+        <div id="jxgbox"></div>
+
+        <!-- FUNCIÓN -->
+        <div class="function-section">
+            <label class="function-label">f(x) =</label>
+            <input type="text" id="func" class="function-input" value="x^3 - x^2 + 2">
+        </div>
+
+        <!-- SELECTOR DE MÉTODOS -->
+        <div class="methods-section">
+            <div class="methods-title">Método</div>
+            <div class="method-buttons" id="selector-metodos">
+                <label class="method-btn active">
+                    <input type="radio" name="metodo" value="biseccion" checked> Bisección
+                </label>
+                <label class="method-btn">
+                    <input type="radio" name="metodo" value="regula-falsi"> Regula Falsi
+                </label>
+                <label class="method-btn">
+                    <input type="radio" name="metodo" value="newton"> Newton-Raphson
+                </label>
+                <label class="method-btn">
+                    <input type="radio" name="metodo" value="secante"> Secante
+                </label>
+                <label class="method-btn">
+                    <input type="radio" name="metodo" value="punto-fijo"> Punto Fijo
+                </label>
+            </div>
+        </div>
+
+        <!-- PARÁMETROS -->
+        <div class="params-panel">
+            <div id="params-biseccion">
+                <div class="param-group">
+                    <label>a:</label>
+                    <input type="number" id="bis-a" value="-2" step="any">
+                </div>
+                <div class="param-group">
+                    <label>b:</label>
+                    <input type="number" id="bis-b" value="2" step="any">
+                </div>
+                <div class="param-group">
+                    <label>Tolerancia:</label>
+                    <input type="number" id="bis-tol" value="0.0001" step="any">
+                </div>
+            </div>
+
+            <div id="params-regula-falsi" hidden>
+                <div class="param-group">
+                    <label>a:</label>
+                    <input type="number" id="rf-a" value="-2" step="any">
+                </div>
+                <div class="param-group">
+                    <label>b:</label>
+                    <input type="number" id="rf-b" value="2" step="any">
+                </div>
+                <div class="param-group">
+                    <label>Tolerancia:</label>
+                    <input type="number" id="rf-tol" value="0.0001" step="any">
+                </div>
+            </div>
+
+            <div id="params-newton" hidden>
+                <div class="param-group">
+                    <label>x₀:</label>
+                    <input type="number" id="nr-x0" value="-2" step="any">
+                </div>
+                <div class="param-group">
+                    <label>Tolerancia:</label>
+                    <input type="number" id="nr-tol" value="0.0001" step="any">
+                </div>
+            </div>
+
+            <div id="params-secante" hidden>
+                <div class="param-group">
+                    <label>x₀:</label>
+                    <input type="number" id="sc-x0" value="-2" step="any">
+                </div>
+                <div class="param-group">
+                    <label>x₁:</label>
+                    <input type="number" id="sc-x1" value="2" step="any">
+                </div>
+                <div class="param-group">
+                    <label>Tolerancia:</label>
+                    <input type="number" id="sc-tol" value="0.0001" step="any">
+                </div>
+            </div>
+
+            <div id="params-punto-fijo" hidden>
+                <div class="param-group">
+                    <label>x₀:</label>
+                    <input type="number" id="pf-x0" value="-2" step="any">
+                </div>
+                <div class="param-group">
+                    <label>Tolerancia:</label>
+                    <input type="number" id="pf-tol" value="0.0001" step="any">
+                </div>
+            </div>
+        </div>
+
+        <!-- BOTÓN CALCULAR -->
+        <button id="btn-calcular" class="calculate-btn">CALCULAR RAÍZ</button>
+
+        <!-- RESULTADOS -->
+        <div class="results-section">
+            <div class="results-grid">
+                <div class="result-card">
+                    <div class="result-label">Raíz encontrada</div>
+                    <div class="result-value" id="res-raiz">---</div>
+                </div>
+                <div class="result-card">
+                    <div class="result-label">Iteraciones</div>
+                    <div class="result-value" id="res-iter">---</div>
+                </div>
+                <div class="result-card">
+                    <div class="result-label">Error final</div>
+                    <div class="result-value" id="res-error">---</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TABLA COMPARATIVA -->
+        <div class="comparison-section">
+            <div class="comparison-title">📊 Comparación de Métodos</div>
+            <table class="comparison-table" id="comparison-table">
+                <thead>
+                    <tr><th>Método</th><th>Raíz</th><th>Iteraciones</th><th>Error</th><th>Estado</th></tr>
+                </thead>
+                <tbody id="comparison-body">
+                    <tr><td>Bisección</td><td>---</td><td>---</td><td>---</td><td>⏳ Pendiente</td></tr>
+                    <tr><td>Regula Falsi</td><td>---</td><td>---</td><td>---</td><td>⏳ Pendiente</td></tr>
+                    <tr><td>Newton-Raphson</td><td>---</td><td>---</td><td>---</td><td>⏳ Pendiente</td></tr>
+                    <tr><td>Secante</td><td>---</td><td>---</td><td>---</td><td>⏳ Pendiente</td></tr>
+                    <tr><td>Punto Fijo</td><td>---</td><td>---</td><td>---</td><td>⏳ Pendiente</td></tr>
+                </tbody>
+            </table>
+            <div class="comparison-actions">
+                <button id="compare-all" class="comparison-btn">Comparar métodos calculados</button>
+                <button id="clear-comparison" class="comparison-btn">Limpiar todo</button>
+            </div>
+        </div>
+
+        <div class="best-method-section" id="best-method-section" style="display: none;">
+            <div class="best-method-card">
+                <div class="best-method-icon">🏆</div>
+                <div class="best-method-content">
+                    <div class="best-method-label">Mejor método</div>
+                    <div class="best-method-name" id="best-method-name">---</div>
+                    <div class="best-method-details" id="best-method-details">---</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="script.js"></script>
+
+<script>
+    document.querySelectorAll('input[name="metodo"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+            document.querySelectorAll('.method-btn').forEach(btn => btn.classList.remove('active'));
+            this.closest('.method-btn').classList.add('active');
+        });
+    });
+</script>
+
+</body>
+</html>
