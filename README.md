@@ -6,6 +6,14 @@ Herramienta de análisis numérico con graficadora interactiva.
 
 ---
 
+## Bitácora de cambios
+
+| Fecha | Componente | Cambio | Detalle |
+|-------|-----------|--------|---------|
+| 2026-05-31 | `robledo-graficadora` | Consola de diagnóstico con historial (`consola.js`) | [ver →](docs/CHANGELOG.md) |
+
+---
+
 ## Software principal
 
 Calculadora de métodos numéricos para búsqueda de raíces, desarrollada por Wilson. Permite ingresar una función f(x), elegir un método y visualizar el resultado en una gráfica.
@@ -84,6 +92,8 @@ El HTML actúa como un visualizador sin lógica propia: selecciona el método, l
 ├── script.js
 ├── style.css
 ├── README.md
+├── docs/
+│   └── CHANGELOG.md            — historial de cambios
 ├── metodos-numericos/          — lógica pura, un archivo por método
 │   ├── biseccion.js
 │   ├── regula-falsi.js
@@ -93,6 +103,7 @@ El HTML actúa como un visualizador sin lógica propia: selecciona el método, l
 ├── robledo-graficadora/        — maqueta graficadora interactiva
 │   ├── index.html
 │   ├── script.js
+│   ├── consola.js              — consola de diagnóstico con historial
 │   └── style.css
 └── test/                       — maquetas de prueba
     ├── audioaldeano/           — sonidos para teclado matemático
