@@ -15,7 +15,7 @@ body {
     max-width: 1000px;
     margin: 0 auto;
     background: #edddd4;
-    border-radius: 30px;
+    border-radius: 20px;
     box-shadow: 0 20px 60px rgba(0,0,0,0.3);
     overflow: hidden;
     animation: fadeIn 0.5s ease-out;
@@ -27,10 +27,10 @@ body {
 }
 
 .header {
-    background: linear-gradient(135deg, #283d3b 0%, #772e25 100%);
+    background: #84bbb5;
     padding: 25px;
     text-align: center;
-    color: #edddd4;
+    color: #ffffff;
 }
 
 .header h1 { 
@@ -55,7 +55,7 @@ body {
 }
 
 .function-section {
-    background: #ffffff;
+    background: #edddd4;
     padding: 15px;
     border-radius: 12px;
     margin-bottom: 25px;
@@ -104,7 +104,7 @@ body {
 
 .method-btn {
     padding: 8px 16px;
-    background: #197278;
+    background: #84bbb5;
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -115,14 +115,14 @@ body {
 
 .method-btn:hover { 
     background: #c44536; 
-    color: #ffffff;
+    color: #edddd4;
     transform: translateY(-2px);
 }
 
 .method-btn input[type="radio"] { display: none; }
 .method-btn.active {
     background: linear-gradient(135deg, #c44536 0%, #772e25 100%);
-    color: #ffffff;
+    color: #edddd4;
     box-shadow: 0 2px 8px rgba(40, 61, 59, 0.3);
 }
 
@@ -131,7 +131,7 @@ body {
     border-radius: 12px;
     padding: 15px;
     margin-bottom: 20px;
-    border: 1px solid #197278;
+    border: 1px solid #84bbb5;
 }
 
 #params-biseccion,
@@ -159,7 +159,7 @@ body {
 
 .param-group input {
     padding: 8px 10px;
-    border: 2px solid #197278;
+    border: 2px solid #84bbb5;
     border-radius: 6px;
     width: 120px;
     background: white;
@@ -308,7 +308,7 @@ body {
 
 .comparison-table th {
     background: linear-gradient(135deg, #283d3b 0%, #197278 100%);
-    color: #ffffff;
+    color: #edddd4;
     padding: 8px;
     text-align: center;
 }
