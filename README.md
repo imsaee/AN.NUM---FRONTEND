@@ -10,7 +10,29 @@ Herramienta de análisis numérico con graficadora interactiva.
 
 | Fecha | Componente | Cambio | Detalle |
 |-------|-----------|--------|---------|
-| 2026-05-31 | `robledo-graficadora` | `823c2f5` — Consola de diagnóstico con historial (`consola.js`) | [ver →](docs/CHANGELOG.md) |
+| 2026-05-31 | `robledo-graficadora` | `823c2f5` — Consola de diagnóstico con historial (`consola.js`) | [ver →](docs/823c2f5.md) |
+
+### Cómo documentar un cambio
+
+1. Hacer el commit normalmente con `git commit`
+2. Copiar el ID corto del commit (los 7 caracteres que muestra git, ej. `823c2f5`)
+3. Crear el archivo `docs/<id_commit>.md` con este formato:
+   ```markdown
+   # `id_commit` — YYYY-MM-DD
+
+   ### componente: título del cambio
+
+   **Archivos modificados:**
+   - `ruta/archivo.js` — qué se hizo
+
+   **Qué hace:**
+   Explicación breve del cambio.
+   ```
+4. Agregar una fila a la tabla de arriba en este README:
+   ```
+   | YYYY-MM-DD | `carpeta` | `id_commit` — resumen corto | [ver →](docs/id_commit.md) |
+   ```
+5. Hacer commit solo con la documentación: `git add README.md docs/<id_commit>.md`
 
 ---
 
