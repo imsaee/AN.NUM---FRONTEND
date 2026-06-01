@@ -13,59 +13,71 @@
     <script src="../metodos-numericos/newton.js"></script>
     <script src="../metodos-numericos/secante.js"></script>
     <script src="../metodos-numericos/punto-fijo.js"></script>
+    <script src="../metodos-numericos/gauss-simple.js"></script>
+    <script src="../metodos-numericos/gauss-jordan.js"></script>
+    <script src="../metodos-numericos/jacobi.js"></script>
+    <script src="../metodos-numericos/gauss-seidel.js"></script>
 </head>
 <body>
 
     <div id="jxgbox"></div>
 
-    <!-- FUNCIÓN COMPARTIDA -->
     <p>f(x): <input type="text" id="func" value="x^3 - x^2 + 2"></p>
 
-    <!-- SELECTOR DE MÉTODO -->
     <div id="selector-metodos">
         <label><input type="radio" name="metodo" value="biseccion" checked> Bisección</label>
         <label><input type="radio" name="metodo" value="regula-falsi"> Regula Falsi</label>
         <label><input type="radio" name="metodo" value="newton"> Newton-Raphson</label>
         <label><input type="radio" name="metodo" value="secante"> Secante</label>
         <label><input type="radio" name="metodo" value="punto-fijo"> Punto Fijo</label>
+        <br><br>
+        <label><input type="radio" name="metodo" value="gauss-simple"> Gauss Simple</label>
+        <label><input type="radio" name="metodo" value="gauss-jordan"> Gauss Jordan</label>
+        <label><input type="radio" name="metodo" value="jacobi"> Jacobi</label>
+        <label><input type="radio" name="metodo" value="gauss-seidel"> Gauss Seidel</label>
     </div>
 
-    <!-- Bisección -->
     <div id="params-biseccion">
         <p>a: <input type="number" id="bis-a" value="-2"></p>
         <p>b: <input type="number" id="bis-b" value="2"></p>
         <p>Tolerancia: <input type="number" id="bis-tol" value="0.0001" step="any"></p>
     </div>
 
-    <!-- Regula Falsi -->
     <div id="params-regula-falsi" hidden>
         <p>a: <input type="number" id="rf-a" value="-2"></p>
         <p>b: <input type="number" id="rf-b" value="2"></p>
         <p>Tolerancia: <input type="number" id="rf-tol" value="0.0001" step="any"></p>
     </div>
 
-    <!-- Newton-Raphson -->
     <div id="params-newton" hidden>
         <p>x0: <input type="number" id="nr-x0" value="-2"></p>
         <p>Tolerancia: <input type="number" id="nr-tol" value="0.0001" step="any"></p>
     </div>
 
-    <!-- Secante -->
     <div id="params-secante" hidden>
         <p>x0: <input type="number" id="sc-x0" value="-2"></p>
         <p>x1: <input type="number" id="sc-x1" value="2"></p>
         <p>Tolerancia: <input type="number" id="sc-tol" value="0.0001" step="any"></p>
     </div>
 
-    <!-- Punto Fijo -->
     <div id="params-punto-fijo" hidden>
         <p>x0: <input type="number" id="pf-x0" value="-2"></p>
         <p>Tolerancia: <input type="number" id="pf-tol" value="0.0001" step="any"></p>
     </div>
 
-    <!-- RESULTADO -->
+    <div id="params-matriciales" hidden>
+        <p>Tamaño del sistema (N x N): 
+            <input type="number" id="mat-n" value="3" min="2" max="6" style="width: 50px;">
+        </p>
+        <div id="matriz-inputs-container"></div>
+        <div id="params-iterativos-mat" hidden>
+            <p>Tolerancia: <input type="number" id="mat-tol" value="0.0001" step="any"></p>
+            <p>X0 inicial (separado por comas): <input type="text" id="mat-x0" value="0,0,0"></p>
+        </div>
+    </div>
+
     <div id="display-resultado">
-        <p>Raíz: <strong id="res-raiz">---</strong></p>
+        <p>Resultado / Raíz:<br><strong id="res-raiz">---</strong></p>
         <p>Iteraciones: <strong id="res-iter">---</strong></p>
         <p>Error: <strong id="res-error">---</strong></p>
     </div>
