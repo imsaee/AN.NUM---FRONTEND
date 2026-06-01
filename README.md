@@ -11,6 +11,7 @@ Herramienta de análisis numérico con graficadora interactiva.
 | Fecha | Componente | Cambio | Detalle |
 |-------|-----------|--------|---------|
 | 2026-05-31 | `robledo-graficadora` | `823c2f5` — Consola de diagnóstico con historial (`consola.js`) | [ver →](docs/823c2f5.md) |
+| 2026-05-31 | `sae-style` | `fcad045` — Se integraron métodos y se creó una versión final (`index.html`, `script.js`,`style.css`) | [ver →](docs/fcad045.md) |
 
 ### Marco de trabajo — cómo documentar un cambio
 
@@ -105,6 +106,10 @@ El HTML actúa como un visualizador sin lógica propia: selecciona el método, l
 🐷 Se esperan correcciones y propuestas del equipo de desarrollo sobre las maquetas antes de integrarlas. 🐷
 
 ---
+## Etilo y funcionalidad.
+Se finalizó la integración de los métodos y la estructuración de los requisitos en el programa para su posterior estilización. Se completaron los detalles y se arreglaron problemas planteados.
+
+🫚 https://imsaee.github.io/AN.NUM---FRONTEND/sae-style/index.html 🫚
 
 ## Estructura del proyecto
 
