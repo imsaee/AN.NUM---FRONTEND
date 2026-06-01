@@ -18,21 +18,18 @@
 
 <div class="main-container">
     <div class="header">
-        <h1> Calculadora Gráfica</h1>
+        <h1>📊 Calculadora Gráfica</h1>
         <p>Métodos Numéricos para encontrar raíces de funciones</p>
     </div>
 
     <div class="content">
-        <!-- GRÁFICA -->
         <div id="jxgbox"></div>
 
-        <!-- FUNCIÓN -->
         <div class="function-section">
             <label class="function-label">f(x) =</label>
             <input type="text" id="func" class="function-input" value="x^3 - x^2 + 2">
         </div>
 
-        <!-- SELECTOR DE MÉTODOS -->
         <div class="methods-section">
             <div class="methods-title">Método</div>
             <div class="method-buttons" id="selector-metodos">
@@ -54,7 +51,6 @@
             </div>
         </div>
 
-        <!-- PARÁMETROS -->
         <div class="params-panel">
             <div id="params-biseccion">
                 <div class="param-group">
@@ -124,28 +120,25 @@
             </div>
         </div>
 
-        <!-- BOTÓN CALCULAR -->
-        <button id="btn-calcular" class="calculate-btn">CALCULAR RAÍZ</button>
+        <button id="btn-calcular" class="calculate-btn">🚀 CALCULAR RAÍZ</button>
 
-        <!-- RESULTADOS -->
         <div class="results-section">
             <div class="results-grid">
                 <div class="result-card">
-                    <div class="result-label">Raíz encontrada</div>
+                    <div class="result-label">🎯 Raíz encontrada</div>
                     <div class="result-value" id="res-raiz">---</div>
                 </div>
                 <div class="result-card">
-                    <div class="result-label">Iteraciones</div>
+                    <div class="result-label">🔄 Iteraciones</div>
                     <div class="result-value" id="res-iter">---</div>
                 </div>
                 <div class="result-card">
-                    <div class="result-label">Error final</div>
+                    <div class="result-label">📐 Error final</div>
                     <div class="result-value" id="res-error">---</div>
                 </div>
             </div>
         </div>
 
-        <!-- TABLA COMPARATIVA -->
         <div class="comparison-section">
             <div class="comparison-title">📊 Comparación de Métodos</div>
             <table class="comparison-table" id="comparison-table">
@@ -161,12 +154,11 @@
                 </tbody>
             </table>
             <div class="comparison-actions">
-                <button id="compare-all" class="comparison-btn">Comparar métodos calculados</button>
-                <button id="clear-comparison" class="comparison-btn">Limpiar todo</button>
+                <button id="compare-all" class="comparison-btn">🔄 Comparar métodos calculados</button>
+                <button id="clear-comparison" class="comparison-btn">🗑️ Limpiar todo</button>
             </div>
         </div>
 
-        <!-- MEJOR MÉTODO - AHORA AL FINAL, DESPUÉS DE LA TABLA -->
         <div class="best-method-section" id="best-method-section" style="display: none;">
             <div class="best-method-card">
                 <div class="best-method-icon">🏆</div>
@@ -181,16 +173,5 @@
 </div>
 
 <script src="script.js"></script>
-
-<script>
-    // Activar cambio visual de botones
-    document.querySelectorAll('input[name="metodo"]').forEach(radio => {
-        radio.addEventListener('change', function() {
-            document.querySelectorAll('.method-btn').forEach(btn => btn.classList.remove('active'));
-            this.closest('.method-btn').classList.add('active');
-        });
-    });
-</script>
-
 </body>
 </html>
