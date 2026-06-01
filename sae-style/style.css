@@ -27,12 +27,11 @@ body {
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* HEADER DE UN SOLO COLOR */
 .header {
-    background: #84bbb5;
+    background: #283d3b;
     padding: 25px;
     text-align: center;
-    color: #ffffff;
+    color: #edddd4;
 }
 
 .header h1 { 
@@ -106,12 +105,12 @@ body {
 
 .method-btn {
     padding: 8px 16px;
-    background: #84bbb5;
+    background: #197278;
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.3s ease;
     font-size: 0.9rem;
-    color: #ffffff;
+    color: #edddd4;
     font-weight: 600;
 }
 
@@ -133,14 +132,11 @@ body {
     border-radius: 12px;
     padding: 15px;
     margin-bottom: 20px;
-    border: 1px solid #84bbb5;
+    border: 1px solid #197278;
+    min-height: 120px;
 }
 
-#params-biseccion,
-#params-regula-falsi,
-#params-newton,
-#params-secante,
-#params-punto-fijo {
+.param-panel {
     display: flex;
     flex-wrap: wrap;
     gap: 15px;
@@ -161,7 +157,7 @@ body {
 
 .param-group input {
     padding: 8px 10px;
-    border: 2px solid #84bbb5;
+    border: 2px solid #197278;
     border-radius: 6px;
     width: 120px;
     background: white;
@@ -228,7 +224,6 @@ body {
     color: #edddd4;
 }
 
-/* Mejor método - al final */
 .best-method-section {
     margin-top: 20px;
     animation: slideDown 0.5s ease-out;
@@ -354,7 +349,6 @@ body {
     transform: translateY(-1px);
 }
 
-/* Responsive */
 @media (max-width: 768px) {
     body { padding: 20px 10px; }
     .header h1 { font-size: 1.5rem; }

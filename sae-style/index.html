@@ -52,7 +52,7 @@
         </div>
 
         <div class="params-panel">
-            <div id="params-biseccion">
+            <div id="params-biseccion" class="param-panel">
                 <div class="param-group">
                     <label>a:</label>
                     <input type="number" id="bis-a" value="-2" step="any">
@@ -67,7 +67,7 @@
                 </div>
             </div>
 
-            <div id="params-regula-falsi" hidden>
+            <div id="params-regula-falsi" class="param-panel" style="display: none;">
                 <div class="param-group">
                     <label>a:</label>
                     <input type="number" id="rf-a" value="-2" step="any">
@@ -82,7 +82,7 @@
                 </div>
             </div>
 
-            <div id="params-newton" hidden>
+            <div id="params-newton" class="param-panel" style="display: none;">
                 <div class="param-group">
                     <label>x₀:</label>
                     <input type="number" id="nr-x0" value="-2" step="any">
@@ -93,7 +93,7 @@
                 </div>
             </div>
 
-            <div id="params-secante" hidden>
+            <div id="params-secante" class="param-panel" style="display: none;">
                 <div class="param-group">
                     <label>x₀:</label>
                     <input type="number" id="sc-x0" value="-2" step="any">
@@ -108,7 +108,7 @@
                 </div>
             </div>
 
-            <div id="params-punto-fijo" hidden>
+            <div id="params-punto-fijo" class="param-panel" style="display: none;">
                 <div class="param-group">
                     <label>x₀:</label>
                     <input type="number" id="pf-x0" value="-2" step="any">
@@ -173,5 +173,6 @@
 </div>
 
 <script src="script.js"></script>
+
 </body>
 </html>
