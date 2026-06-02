@@ -14,14 +14,14 @@
     <script src="../metodos-numericos/newton.js"></script>
     <script src="../metodos-numericos/secante.js"></script>
     <script src="../metodos-numericos/punto-fijo.js"></script>
-    <!-- Nuevos métodos de integración -->
+    <!-- Métodos de integración -->
     <script src="../metodos-numericos/regla-trapezoidal.js"></script>
     <script src="../metodos-numericos/regla-trapezoidal-simp.js"></script>
     <script src="../metodos-numericos/simpson1-3.js"></script>
-    <!-- Nuevos métodos de EDO -->
+    <!-- Métodos de EDO -->
     <script src="../metodos-numericos/euler.js"></script>
     <script src="../metodos-numericos/rk4.js"></script>
-    <!-- Nuevos métodos de sistemas lineales -->
+    <!-- Métodos de sistemas lineales -->
     <script src="../metodos-numericos/jacobi.js"></script>
     <script src="../metodos-numericos/gauss-seidel.js"></script>
     <script src="../metodos-numericos/gauss-simple.js"></script>
@@ -32,201 +32,297 @@
 <div class="main-container">
     <div class="header">
         <h1>📊 Calculadora Gráfica</h1>
-        <p>Métodos Numéricos para encontrar raíces, integrar, EDOs y sistemas lineales</p>
+        <p>Métodos Numéricos para diferentes tipos de problemas</p>
+    </div>
+
+    <!-- PESTAÑAS -->
+    <div class="tabs">
+        <button class="tab-btn active" data-tab="raices">🔍 Búsqueda de Raíces</button>
+        <button class="tab-btn" data-tab="integrales">📐 Integrales</button>
+        <button class="tab-btn" data-tab="edo">📈 Ecuaciones Diferenciales (EDO)</button>
+        <button class="tab-btn" data-tab="sistemas">📊 Sistemas Lineales</button>
     </div>
 
     <div class="content">
-        <div id="jxgbox"></div>
+        <!-- ==================== PESTAÑA 1: RAÍCES ==================== -->
+        <div id="tab-raices" class="tab-content active">
+            <div id="jxgbox"></div>
 
-        <div class="function-section">
-            <label class="function-label">f(x) =</label>
-            <input type="text" id="func" class="function-input" value="x^3 - x^2 + 2">
-        </div>
-
-        <div class="methods-section">
-            <div class="methods-title">Método</div>
-            <div class="method-buttons" id="selector-metodos">
-                <!-- Métodos de búsqueda de raíces -->
-                <label class="method-btn active">
-                    <input type="radio" name="metodo" value="biseccion" checked> Bisección
-                </label>
-                <label class="method-btn">
-                    <input type="radio" name="metodo" value="regula-falsi"> Regula Falsi
-                </label>
-                <label class="method-btn">
-                    <input type="radio" name="metodo" value="newton"> Newton-Raphson
-                </label>
-                <label class="method-btn">
-                    <input type="radio" name="metodo" value="secante"> Secante
-                </label>
-                <label class="method-btn">
-                    <input type="radio" name="metodo" value="punto-fijo"> Punto Fijo
-                </label>
-                <!-- Métodos de integración -->
-                <label class="method-btn">
-                    <input type="radio" name="metodo" value="trapezoidal-simple"> Trapezoidal Simple
-                </label>
-                <label class="method-btn">
-                    <input type="radio" name="metodo" value="trapezoidal-comp"> Trapezoidal Compuesta
-                </label>
-                <label class="method-btn">
-                    <input type="radio" name="metodo" value="simpson13"> Simpson 1/3
-                </label>
-                <!-- Métodos de EDO -->
-                <label class="method-btn">
-                    <input type="radio" name="metodo" value="euler"> Euler
-                </label>
-                <label class="method-btn">
-                    <input type="radio" name="metodo" value="rk4"> Runge-Kutta 4
-                </label>
-                <!-- Métodos de sistemas lineales -->
-                <label class="method-btn">
-                    <input type="radio" name="metodo" value="jacobi"> Jacobi
-                </label>
-                <label class="method-btn">
-                    <input type="radio" name="metodo" value="gauss-seidel"> Gauss-Seidel
-                </label>
-                <label class="method-btn">
-                    <input type="radio" name="metodo" value="gauss-simple"> Gauss Simple
-                </label>
-                <label class="method-btn">
-                    <input type="radio" name="metodo" value="gauss-jordan"> Gauss-Jordan
-                </label>
-            </div>
-        </div>
-
-        <div class="params-panel">
-            <!-- Parámetros para métodos de raíces -->
-            <div id="params-biseccion" class="param-panel">
-                <div class="param-group"><label>a:</label><input type="number" id="bis-a" value="-2" step="any"></div>
-                <div class="param-group"><label>b:</label><input type="number" id="bis-b" value="2" step="any"></div>
-                <div class="param-group"><label>Tolerancia:</label><input type="number" id="bis-tol" value="0.0001" step="any"></div>
+            <div class="function-section">
+                <label class="function-label">f(x) =</label>
+                <input type="text" id="func-raices" class="function-input" value="x^3 - x^2 + 2">
             </div>
 
-            <div id="params-regula-falsi" class="param-panel" style="display: none;">
-                <div class="param-group"><label>a:</label><input type="number" id="rf-a" value="-2" step="any"></div>
-                <div class="param-group"><label>b:</label><input type="number" id="rf-b" value="2" step="any"></div>
-                <div class="param-group"><label>Tolerancia:</label><input type="number" id="rf-tol" value="0.0001" step="any"></div>
-            </div>
-
-            <div id="params-newton" class="param-panel" style="display: none;">
-                <div class="param-group"><label>x₀:</label><input type="number" id="nr-x0" value="-2" step="any"></div>
-                <div class="param-group"><label>Tolerancia:</label><input type="number" id="nr-tol" value="0.0001" step="any"></div>
-            </div>
-
-            <div id="params-secante" class="param-panel" style="display: none;">
-                <div class="param-group"><label>x₀:</label><input type="number" id="sc-x0" value="-2" step="any"></div>
-                <div class="param-group"><label>x₁:</label><input type="number" id="sc-x1" value="2" step="any"></div>
-                <div class="param-group"><label>Tolerancia:</label><input type="number" id="sc-tol" value="0.0001" step="any"></div>
-            </div>
-
-            <div id="params-punto-fijo" class="param-panel" style="display: none;">
-                <div class="param-group"><label>x₀:</label><input type="number" id="pf-x0" value="-2" step="any"></div>
-                <div class="param-group"><label>Tolerancia:</label><input type="number" id="pf-tol" value="0.0001" step="any"></div>
-            </div>
-
-            <!-- Parámetros para métodos de integración -->
-            <div id="params-trapezoidal-simple" class="param-panel" style="display: none;">
-                <div class="param-group"><label>a (inicio):</label><input type="number" id="trap-simple-a" value="0" step="any"></div>
-                <div class="param-group"><label>b (fin):</label><input type="number" id="trap-simple-b" value="1" step="any"></div>
-            </div>
-
-            <div id="params-trapezoidal-comp" class="param-panel" style="display: none;">
-                <div class="param-group"><label>a (inicio):</label><input type="number" id="trap-comp-a" value="0" step="any"></div>
-                <div class="param-group"><label>b (fin):</label><input type="number" id="trap-comp-b" value="1" step="any"></div>
-                <div class="param-group"><label>n (subintervalos):</label><input type="number" id="trap-comp-n" value="10" step="1"></div>
-            </div>
-
-            <div id="params-simpson13" class="param-panel" style="display: none;">
-                <div class="param-group"><label>a (inicio):</label><input type="number" id="simp-a" value="0" step="any"></div>
-                <div class="param-group"><label>b (fin):</label><input type="number" id="simp-b" value="1" step="any"></div>
-            </div>
-
-            <!-- Parámetros para métodos de EDO -->
-            <div id="params-euler" class="param-panel" style="display: none;">
-                <div class="param-group"><label>xi (inicio x):</label><input type="number" id="euler-xi" value="0" step="any"></div>
-                <div class="param-group"><label>yi (inicio y):</label><input type="number" id="euler-yi" value="1" step="any"></div>
-                <div class="param-group"><label>xf (fin x):</label><input type="number" id="euler-xf" value="1" step="any"></div>
-                <div class="param-group"><label>dx (paso):</label><input type="number" id="euler-dx" value="0.1" step="any"></div>
-                <div class="param-group"><label>dy/dx =</label><input type="text" id="euler-derivs" value="x + y" style="width: 150px;"></div>
-            </div>
-
-            <div id="params-rk4" class="param-panel" style="display: none;">
-                <div class="param-group"><label>xi (inicio x):</label><input type="number" id="rk4-xi" value="0" step="any"></div>
-                <div class="param-group"><label>yi (inicio y):</label><input type="number" id="rk4-yi" value="1" step="any"></div>
-                <div class="param-group"><label>xf (fin x):</label><input type="number" id="rk4-xf" value="1" step="any"></div>
-                <div class="param-group"><label>dx (paso):</label><input type="number" id="rk4-dx" value="0.1" step="any"></div>
-                <div class="param-group"><label>dy/dx =</label><input type="text" id="rk4-derivs" value="x + y" style="width: 150px;"></div>
-            </div>
-
-            <!-- Parámetros para métodos de sistemas lineales -->
-            <div id="params-jacobi" class="param-panel" style="display: none;">
-                <div class="param-group"><label>Matriz A:</label><input type="text" id="jacobi-A" value="4,-1,1;-1,3,-2;1,-2,5" style="width: 200px;"></div>
-                <div class="param-group"><label>Vector b:</label><input type="text" id="jacobi-b" value="8;2;3" style="width: 120px;"></div>
-                <div class="param-group"><label>x0:</label><input type="text" id="jacobi-x0" value="0;0;0" style="width: 120px;"></div>
-                <div class="param-group"><label>Tolerancia:</label><input type="number" id="jacobi-tol" value="0.0001" step="any"></div>
-            </div>
-
-            <div id="params-gauss-seidel" class="param-panel" style="display: none;">
-                <div class="param-group"><label>Matriz A:</label><input type="text" id="gs-A" value="4,-1,1;-1,3,-2;1,-2,5" style="width: 200px;"></div>
-                <div class="param-group"><label>Vector b:</label><input type="text" id="gs-b" value="8;2;3" style="width: 120px;"></div>
-                <div class="param-group"><label>x0:</label><input type="text" id="gs-x0" value="0;0;0" style="width: 120px;"></div>
-                <div class="param-group"><label>Tolerancia:</label><input type="number" id="gs-tol" value="0.0001" step="any"></div>
-            </div>
-
-            <div id="params-gauss-simple" class="param-panel" style="display: none;">
-                <div class="param-group"><label>Matriz A:</label><input type="text" id="gauss-A" value="2,1,-1;-3,-1,2;-2,1,2" style="width: 200px;"></div>
-                <div class="param-group"><label>Vector b:</label><input type="text" id="gauss-b" value="8;-11;-3" style="width: 120px;"></div>
-            </div>
-
-            <div id="params-gauss-jordan" class="param-panel" style="display: none;">
-                <div class="param-group"><label>Matriz A:</label><input type="text" id="gj-A" value="2,1,-1;-3,-1,2;-2,1,2" style="width: 200px;"></div>
-                <div class="param-group"><label>Vector b:</label><input type="text" id="gj-b" value="8;-11;-3" style="width: 120px;"></div>
-            </div>
-        </div>
-
-        <button id="btn-calcular" class="calculate-btn">🚀 CALCULAR</button>
-
-        <div class="results-section">
-            <div class="results-grid">
-                <div class="result-card">
-                    <div class="result-label">🎯 Resultado</div>
-                    <div class="result-value" id="res-raiz">---</div>
+            <div class="methods-section">
+                <div class="methods-title">Método</div>
+                <div class="method-buttons" id="selector-metodos-raices">
+                    <label class="method-btn active">
+                        <input type="radio" name="metodo-raices" value="biseccion" checked> Bisección
+                    </label>
+                    <label class="method-btn">
+                        <input type="radio" name="metodo-raices" value="regula-falsi"> Regula Falsi
+                    </label>
+                    <label class="method-btn">
+                        <input type="radio" name="metodo-raices" value="newton"> Newton-Raphson
+                    </label>
+                    <label class="method-btn">
+                        <input type="radio" name="metodo-raices" value="secante"> Secante
+                    </label>
+                    <label class="method-btn">
+                        <input type="radio" name="metodo-raices" value="punto-fijo"> Punto Fijo
+                    </label>
                 </div>
-                <div class="result-card">
-                    <div class="result-label">🔄 Iteraciones</div>
-                    <div class="result-value" id="res-iter">---</div>
+            </div>
+
+            <div class="params-panel">
+                <div id="params-biseccion" class="param-panel">
+                    <div class="param-group"><label>a:</label><input type="number" id="bis-a" value="-2" step="any"></div>
+                    <div class="param-group"><label>b:</label><input type="number" id="bis-b" value="2" step="any"></div>
+                    <div class="param-group"><label>Tolerancia:</label><input type="number" id="bis-tol" value="0.0001" step="any"></div>
                 </div>
-                <div class="result-card">
-                    <div class="result-label">📐 Error/Tolerancia</div>
-                    <div class="result-value" id="res-error">---</div>
+                <div id="params-regula-falsi" class="param-panel" style="display: none;">
+                    <div class="param-group"><label>a:</label><input type="number" id="rf-a" value="-2" step="any"></div>
+                    <div class="param-group"><label>b:</label><input type="number" id="rf-b" value="2" step="any"></div>
+                    <div class="param-group"><label>Tolerancia:</label><input type="number" id="rf-tol" value="0.0001" step="any"></div>
+                </div>
+                <div id="params-newton" class="param-panel" style="display: none;">
+                    <div class="param-group"><label>x₀:</label><input type="number" id="nr-x0" value="-2" step="any"></div>
+                    <div class="param-group"><label>Tolerancia:</label><input type="number" id="nr-tol" value="0.0001" step="any"></div>
+                </div>
+                <div id="params-secante" class="param-panel" style="display: none;">
+                    <div class="param-group"><label>x₀:</label><input type="number" id="sc-x0" value="-2" step="any"></div>
+                    <div class="param-group"><label>x₁:</label><input type="number" id="sc-x1" value="2" step="any"></div>
+                    <div class="param-group"><label>Tolerancia:</label><input type="number" id="sc-tol" value="0.0001" step="any"></div>
+                </div>
+                <div id="params-punto-fijo" class="param-panel" style="display: none;">
+                    <div class="param-group"><label>x₀:</label><input type="number" id="pf-x0" value="-2" step="any"></div>
+                    <div class="param-group"><label>Tolerancia:</label><input type="number" id="pf-tol" value="0.0001" step="any"></div>
+                </div>
+            </div>
+
+            <button id="btn-calcular-raices" class="calculate-btn">🚀 CALCULAR RAÍZ</button>
+
+            <div class="results-section">
+                <div class="results-grid">
+                    <div class="result-card"><div class="result-label">🎯 Raíz encontrada</div><div class="result-value" id="res-raiz">---</div></div>
+                    <div class="result-card"><div class="result-label">🔄 Iteraciones</div><div class="result-value" id="res-iter">---</div></div>
+                    <div class="result-card"><div class="result-label">📐 Error final</div><div class="result-value" id="res-error">---</div></div>
+                </div>
+            </div>
+
+            <div class="comparison-section">
+                <div class="comparison-title">📊 Comparación de Métodos (Raíces)</div>
+                <table class="comparison-table" id="comparison-table-raices">
+                    <thead><tr><th>Método</th><th>Raíz</th><th>Iteraciones</th><th>Error</th><th>Estado</th></tr></thead>
+                    <tbody id="comparison-body-raices"></tbody>
+                </table>
+                <div class="comparison-actions">
+                    <button id="compare-all-raices" class="comparison-btn">🔄 Comparar todos</button>
+                    <button id="clear-raices" class="comparison-btn">🗑️ Limpiar</button>
+                </div>
+            </div>
+
+            <div class="best-method-section" id="best-method-raices" style="display: none;">
+                <div class="best-method-card"><div class="best-method-icon">🏆</div>
+                    <div class="best-method-content">
+                        <div class="best-method-label">Mejor método</div>
+                        <div class="best-method-name" id="best-name-raices">---</div>
+                        <div class="best-method-details" id="best-details-raices">---</div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="comparison-section">
-            <div class="comparison-title">📊 Comparación de Métodos</div>
-            <table class="comparison-table" id="comparison-table">
-                <thead>
-                    <tr><th>Método</th><th>Resultado</th><th>Iteraciones</th><th>Error</th><th>Estado</th></tr>
-                </thead>
-                <tbody id="comparison-body">
-                    <!-- Las filas se generan dinámicamente con JavaScript -->
-                </tbody>
-            </table>
-            <div class="comparison-actions">
-                <button id="compare-all" class="comparison-btn">🔄 Comparar métodos calculados</button>
-                <button id="clear-comparison" class="comparison-btn">🗑️ Limpiar todo</button>
+        <!-- ==================== PESTAÑA 2: INTEGRALES ==================== -->
+        <div id="tab-integrales" class="tab-content">
+            <div id="jxgbox2"></div>
+
+            <div class="function-section">
+                <label class="function-label">f(x) =</label>
+                <input type="text" id="func-integrales" class="function-input" value="x^2">
+            </div>
+
+            <div class="methods-section">
+                <div class="methods-title">Método de Integración</div>
+                <div class="method-buttons" id="selector-metodos-integrales">
+                    <label class="method-btn active">
+                        <input type="radio" name="metodo-integrales" value="trapezoidal-simple" checked> Trapezoidal Simple
+                    </label>
+                    <label class="method-btn">
+                        <input type="radio" name="metodo-integrales" value="trapezoidal-comp"> Trapezoidal Compuesta
+                    </label>
+                    <label class="method-btn">
+                        <input type="radio" name="metodo-integrales" value="simpson13"> Simpson 1/3
+                    </label>
+                </div>
+            </div>
+
+            <div class="params-panel">
+                <div id="params-integral-trapezoidal-simple" class="param-panel">
+                    <div class="param-group"><label>a (inicio):</label><input type="number" id="int-trap-simple-a" value="0" step="any"></div>
+                    <div class="param-group"><label>b (fin):</label><input type="number" id="int-trap-simple-b" value="1" step="any"></div>
+                </div>
+                <div id="params-integral-trapezoidal-comp" class="param-panel" style="display: none;">
+                    <div class="param-group"><label>a (inicio):</label><input type="number" id="int-trap-comp-a" value="0" step="any"></div>
+                    <div class="param-group"><label>b (fin):</label><input type="number" id="int-trap-comp-b" value="1" step="any"></div>
+                    <div class="param-group"><label>n (subintervalos):</label><input type="number" id="int-trap-comp-n" value="10" step="1"></div>
+                </div>
+                <div id="params-integral-simpson13" class="param-panel" style="display: none;">
+                    <div class="param-group"><label>a (inicio):</label><input type="number" id="int-simp-a" value="0" step="any"></div>
+                    <div class="param-group"><label>b (fin):</label><input type="number" id="int-simp-b" value="1" step="any"></div>
+                </div>
+            </div>
+
+            <button id="btn-calcular-integrales" class="calculate-btn">📐 CALCULAR INTEGRAL</button>
+
+            <div class="results-section">
+                <div class="results-grid">
+                    <div class="result-card"><div class="result-label">📊 Valor de la integral</div><div class="result-value" id="res-integral">---</div></div>
+                    <div class="result-card"><div class="result-label">🔄 Subintervalos</div><div class="result-value" id="res-integral-iter">---</div></div>
+                </div>
+            </div>
+
+            <div class="comparison-section">
+                <div class="comparison-title">📊 Comparación de Métodos (Integrales)</div>
+                <table class="comparison-table" id="comparison-table-integrales">
+                    <thead><tr><th>Método</th><th>Resultado</th><th>Subintervalos</th><th>Estado</th></tr></thead>
+                    <tbody id="comparison-body-integrales"></tbody>
+                </table>
+                <div class="comparison-actions">
+                    <button id="compare-all-integrales" class="comparison-btn">🔄 Comparar todos</button>
+                    <button id="clear-integrales" class="comparison-btn">🗑️ Limpiar</button>
+                </div>
             </div>
         </div>
 
-        <div class="best-method-section" id="best-method-section" style="display: none;">
-            <div class="best-method-card">
-                <div class="best-method-icon">🏆</div>
-                <div class="best-method-content">
-                    <div class="best-method-label">Mejor método</div>
-                    <div class="best-method-name" id="best-method-name">---</div>
-                    <div class="best-method-details" id="best-method-details">---</div>
+        <!-- ==================== PESTAÑA 3: EDO ==================== -->
+        <div id="tab-edo" class="tab-content">
+            <div class="function-section">
+                <label class="function-label">dy/dx = f(x, y) =</label>
+                <input type="text" id="func-edo" class="function-input" value="x + y">
+            </div>
+
+            <div class="methods-section">
+                <div class="methods-title">Método</div>
+                <div class="method-buttons" id="selector-metodos-edo">
+                    <label class="method-btn active">
+                        <input type="radio" name="metodo-edo" value="euler" checked> Euler
+                    </label>
+                    <label class="method-btn">
+                        <input type="radio" name="metodo-edo" value="rk4"> Runge-Kutta 4
+                    </label>
+                </div>
+            </div>
+
+            <div class="params-panel">
+                <div id="params-edo-euler" class="param-panel">
+                    <div class="param-group"><label>xi (inicio x):</label><input type="number" id="edo-euler-xi" value="0" step="any"></div>
+                    <div class="param-group"><label>yi (inicio y):</label><input type="number" id="edo-euler-yi" value="1" step="any"></div>
+                    <div class="param-group"><label>xf (fin x):</label><input type="number" id="edo-euler-xf" value="1" step="any"></div>
+                    <div class="param-group"><label>h (paso):</label><input type="number" id="edo-euler-h" value="0.1" step="any"></div>
+                </div>
+                <div id="params-edo-rk4" class="param-panel" style="display: none;">
+                    <div class="param-group"><label>xi (inicio x):</label><input type="number" id="edo-rk4-xi" value="0" step="any"></div>
+                    <div class="param-group"><label>yi (inicio y):</label><input type="number" id="edo-rk4-yi" value="1" step="any"></div>
+                    <div class="param-group"><label>xf (fin x):</label><input type="number" id="edo-rk4-xf" value="1" step="any"></div>
+                    <div class="param-group"><label>h (paso):</label><input type="number" id="edo-rk4-h" value="0.1" step="any"></div>
+                </div>
+            </div>
+
+            <button id="btn-calcular-edo" class="calculate-btn">📈 CALCULAR EDO</button>
+
+            <div class="results-section">
+                <div class="results-grid">
+                    <div class="result-card"><div class="result-label">📊 y(xf)</div><div class="result-value" id="res-edo">---</div></div>
+                    <div class="result-card"><div class="result-label">🔄 Pasos</div><div class="result-value" id="res-edo-pasos">---</div></div>
+                </div>
+            </div>
+
+            <div class="comparison-section">
+                <div class="comparison-title">📊 Comparación de Métodos (EDO)</div>
+                <table class="comparison-table" id="comparison-table-edo">
+                    <thead><tr><th>Método</th><th>y(xf)</th><th>Pasos</th><th>Estado</th></tr></thead>
+                    <tbody id="comparison-body-edo"></tbody>
+                </table>
+                <div class="comparison-actions">
+                    <button id="compare-all-edo" class="comparison-btn">🔄 Comparar todos</button>
+                    <button id="clear-edo" class="comparison-btn">🗑️ Limpiar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== PESTAÑA 4: SISTEMAS LINEALES ==================== -->
+        <div id="tab-sistemas" class="tab-content">
+            <div class="methods-section">
+                <div class="methods-title">Método</div>
+                <div class="method-buttons" id="selector-metodos-sistemas">
+                    <label class="method-btn active">
+                        <input type="radio" name="metodo-sistemas" value="jacobi" checked> Jacobi
+                    </label>
+                    <label class="method-btn">
+                        <input type="radio" name="metodo-sistemas" value="gauss-seidel"> Gauss-Seidel
+                    </label>
+                    <label class="method-btn">
+                        <input type="radio" name="metodo-sistemas" value="gauss-simple"> Gauss Simple
+                    </label>
+                    <label class="method-btn">
+                        <input type="radio" name="metodo-sistemas" value="gauss-jordan"> Gauss-Jordan
+                    </label>
+                </div>
+            </div>
+
+            <div class="params-panel">
+                <div id="params-sis-jacobi" class="param-panel">
+                    <div class="param-group"><label>Matriz A:</label><input type="text" id="sis-jacobi-A" value="4,-1,1;-1,3,-2;1,-2,5" style="width: 200px;"></div>
+                    <div class="param-group"><label>Vector b:</label><input type="text" id="sis-jacobi-b" value="8;2;3" style="width: 120px;"></div>
+                    <div class="param-group"><label>x0:</label><input type="text" id="sis-jacobi-x0" value="0;0;0" style="width: 120px;"></div>
+                    <div class="param-group"><label>Tolerancia:</label><input type="number" id="sis-jacobi-tol" value="0.0001" step="any"></div>
+                </div>
+                <div id="params-sis-gauss-seidel" class="param-panel" style="display: none;">
+                    <div class="param-group"><label>Matriz A:</label><input type="text" id="sis-gs-A" value="4,-1,1;-1,3,-2;1,-2,5" style="width: 200px;"></div>
+                    <div class="param-group"><label>Vector b:</label><input type="text" id="sis-gs-b" value="8;2;3" style="width: 120px;"></div>
+                    <div class="param-group"><label>x0:</label><input type="text" id="sis-gs-x0" value="0;0;0" style="width: 120px;"></div>
+                    <div class="param-group"><label>Tolerancia:</label><input type="number" id="sis-gs-tol" value="0.0001" step="any"></div>
+                </div>
+                <div id="params-sis-gauss-simple" class="param-panel" style="display: none;">
+                    <div class="param-group"><label>Matriz A:</label><input type="text" id="sis-gauss-A" value="2,1,-1;-3,-1,2;-2,1,2" style="width: 200px;"></div>
+                    <div class="param-group"><label>Vector b:</label><input type="text" id="sis-gauss-b" value="8;-11;-3" style="width: 120px;"></div>
+                </div>
+                <div id="params-sis-gauss-jordan" class="param-panel" style="display: none;">
+                    <div class="param-group"><label>Matriz A:</label><input type="text" id="sis-gj-A" value="2,1,-1;-3,-1,2;-2,1,2" style="width: 200px;"></div>
+                    <div class="param-group"><label>Vector b:</label><input type="text" id="sis-gj-b" value="8;-11;-3" style="width: 120px;"></div>
+                </div>
+            </div>
+
+            <button id="btn-calcular-sistemas" class="calculate-btn">📊 RESOLVER SISTEMA</button>
+
+            <div class="results-section">
+                <div class="results-grid">
+                    <div class="result-card"><div class="result-label">📊 Solución</div><div class="result-value" id="res-solucion">---</div></div>
+                    <div class="result-card"><div class="result-label">🔄 Iteraciones</div><div class="result-value" id="res-sis-iter">---</div></div>
+                    <div class="result-card"><div class="result-label">📐 Error final</div><div class="result-value" id="res-sis-error">---</div></div>
+                </div>
+            </div>
+
+            <div class="comparison-section">
+                <div class="comparison-title">📊 Comparación de Métodos (Sistemas Lineales)</div>
+                <table class="comparison-table" id="comparison-table-sistemas">
+                    <thead><tr><th>Método</th><th>Solución</th><th>Iteraciones</th><th>Error</th><th>Estado</th></tr></thead>
+                    <tbody id="comparison-body-sistemas"></tbody>
+                </table>
+                <div class="comparison-actions">
+                    <button id="compare-all-sistemas" class="comparison-btn">🔄 Comparar todos</button>
+                    <button id="clear-sistemas" class="comparison-btn">🗑️ Limpiar</button>
+                </div>
+            </div>
+
+            <div class="best-method-section" id="best-method-sistemas" style="display: none;">
+                <div class="best-method-card"><div class="best-method-icon">🏆</div>
+                    <div class="best-method-content">
+                        <div class="best-method-label">Mejor método iterativo</div>
+                        <div class="best-method-name" id="best-name-sistemas">---</div>
+                        <div class="best-method-details" id="best-details-sistemas">---</div>
+                    </div>
                 </div>
             </div>
         </div>

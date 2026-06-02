@@ -13,7 +13,7 @@ body {
 }
 
 .main-container {
-    max-width: 1000px;
+    max-width: 1200px;
     margin: 0 auto;
     background: #edddd4;
     border-radius: 20px;
@@ -42,11 +42,53 @@ body {
 }
 .header p { font-size: 0.9rem; opacity: 0.9; }
 
-.content { padding: 25px; }
+/* PESTAÑAS */
+.tabs {
+    display: flex;
+    background: #197278;
+    padding: 0;
+    gap: 2px;
+}
 
-#jxgbox {
+.tab-btn {
+    flex: 1;
+    padding: 12px 20px;
+    background: #197278;
+    border: none;
+    color: #edddd4;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.tab-btn:hover {
+    background: #c44536;
+    color: white;
+}
+
+.tab-btn.active {
+    background: #edddd4;
+    color: #283d3b;
+}
+
+/* CONTENIDO DE PESTAÑAS */
+.tab-content {
+    display: none;
+    padding: 25px;
+}
+
+.tab-content.active {
+    display: block;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.content { padding: 0; }
+
+#jxgbox, #jxgbox2 {
     width: 100%;
-    height: 450px;
+    height: 400px;
     border-radius: 12px;
     overflow: hidden;
     margin-bottom: 25px;
@@ -133,7 +175,7 @@ body {
     padding: 15px;
     margin-bottom: 20px;
     border: 1px solid #197278;
-    min-height: 120px;
+    min-height: 100px;
 }
 
 .param-panel {
@@ -224,6 +266,7 @@ body {
     color: #edddd4;
 }
 
+/* Mejor método */
 .best-method-section {
     margin-top: 20px;
     animation: slideDown 0.5s ease-out;
@@ -349,30 +392,15 @@ body {
     transform: translateY(-1px);
 }
 
+/* Responsive */
 @media (max-width: 768px) {
     body { padding: 20px 10px; }
     .header h1 { font-size: 1.5rem; }
+    .tabs { flex-direction: column; }
+    .tab-btn { padding: 10px; }
     .method-buttons { flex-direction: column; }
     .method-btn { text-align: center; }
     .results-grid { grid-template-columns: 1fr; gap: 10px; }
     .param-group input { width: 100%; }
     .comparison-table { font-size: 0.7rem; }
-    .comparison-table th, .comparison-table td { padding: 5px; }
-    .best-method-card { flex-direction: column; text-align: center; }
-    .best-method-icon { font-size: 2rem; }
-}
-
-/* Estilos adicionales para inputs grandes de matrices */
-.param-group input[style*="width: 250px"],
-.param-group input[style*="width: 150px"] {
-    width: auto !important;
-    min-width: 150px;
-}
-
-@media (max-width: 768px) {
-    .param-group input[style*="width: 250px"],
-    .param-group input[style*="width: 150px"] {
-        width: 100% !important;
-        min-width: unset;
-    }
-}
+    .comparison-table th, .comparison
