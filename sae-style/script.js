@@ -82,6 +82,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
+    // Almacenamiento resultados raíces (solo para comparación)
     let resultadosRaices = {};
     
     const nombresRaices = {
@@ -92,6 +93,7 @@ document.addEventListener('DOMContentLoaded', function() {
         'punto-fijo': 'Punto Fijo'
     };
     
+    // Guardar resultado (sin mostrar comparación automáticamente)
     function guardarResultadoRaiz(metodo, raiz, iteraciones, error, exito) {
         resultadosRaices[metodo] = {
             nombre: nombresRaices[metodo],
@@ -101,14 +103,50 @@ document.addEventListener('DOMContentLoaded', function() {
             exito: exito,
             errorNum: (typeof error === 'number') ? error : Infinity
         };
-        actualizarTablaRaices();
+        // Solo actualizar la tabla visual, sin mostrar el mejor método aún
+        actualizarTablaRaicesSinMejor();
     }
     
-    function actualizarTablaRaices() {
+    // Actualizar tabla SIN mostrar el mejor método (después de cada cálculo)
+    function actualizarTablaRaicesSinMejor() {
         const tbody = document.getElementById('comparison-body-raices');
         if (!tbody) return;
         tbody.innerHTML = '';
         
+        const orden = ['biseccion', 'regula-falsi', 'newton', 'secante', 'punto-fijo'];
+        orden.forEach(metodo => {
+            const res = resultadosRaices[metodo];
+            const row = tbody.insertRow();
+            if (res) {
+                row.insertCell(0).textContent = res.nombre;
+                row.insertCell(1).textContent = res.resultado;
+                row.insertCell(2).textContent = res.iteraciones;
+                row.insertCell(3).textContent = res.error;
+                row.insertCell(4).innerHTML = res.exito ? '✅ Éxito' : '❌ Error';
+                row.cells[4].style.color = res.exito ? '#28a745' : '#dc3545';
+                row.classList.remove('best-result');
+            } else {
+                row.insertCell(0).textContent = nombresRaices[metodo];
+                row.insertCell(1).textContent = '---';
+                row.insertCell(2).textContent = '---';
+                row.insertCell(3).textContent = '---';
+                row.insertCell(4).innerHTML = '⏳ Pendiente';
+                row.cells[4].style.color = '#ffc107';
+            }
+        });
+        
+        // Ocultar la tarjeta del mejor método hasta que se presione "Comparar"
+        const bestSection = document.getElementById('best-method-raices');
+        if (bestSection) bestSection.style.display = 'none';
+    }
+    
+    // Mostrar comparación con el mejor método (solo al presionar el botón)
+    function mostrarComparacionRaices() {
+        const tbody = document.getElementById('comparison-body-raices');
+        if (!tbody) return;
+        tbody.innerHTML = '';
+        
+        // Encontrar el mejor método (menor error)
         let mejorMetodo = null;
         let menorError = Infinity;
         
@@ -141,12 +179,17 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
         
+        // Mostrar tarjeta del mejor método
         const bestSection = document.getElementById('best-method-raices');
         if (bestSection && mejorMetodo && menorError !== Infinity) {
             const mejor = resultadosRaices[mejorMetodo];
             bestSection.style.display = 'block';
             document.getElementById('best-name-raices').textContent = mejor.nombre;
             document.getElementById('best-details-raices').innerHTML = `Error: ${menorError.toExponential(4)} | Iteraciones: ${mejor.iteraciones} | Raíz: ${mejor.resultado}`;
+        } else if (bestSection && Object.keys(resultadosRaices).length > 0) {
+            bestSection.style.display = 'block';
+            document.getElementById('best-name-raices').textContent = 'Sin resultados exitosos';
+            document.getElementById('best-details-raices').innerHTML = 'Ningún método convergió a una solución.';
         } else if (bestSection) {
             bestSection.style.display = 'none';
         }
@@ -154,12 +197,29 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function limpiarRaices() {
         resultadosRaices = {};
-        actualizarTablaRaices();
+        const tbody = document.getElementById('comparison-body-raices');
+        if (tbody) {
+            const orden = ['biseccion', 'regula-falsi', 'newton', 'secante', 'punto-fijo'];
+            orden.forEach(metodo => {
+                const row = tbody.children[orden.indexOf(metodo)];
+                if (row) {
+                    row.cells[1].textContent = '---';
+                    row.cells[2].textContent = '---';
+                    row.cells[3].textContent = '---';
+                    row.cells[4].innerHTML = '⏳ Pendiente';
+                    row.cells[4].style.color = '#ffc107';
+                    row.classList.remove('best-result');
+                }
+            });
+        }
+        const bestSection = document.getElementById('best-method-raices');
+        if (bestSection) bestSection.style.display = 'none';
         document.getElementById('res-raiz').textContent = '---';
         document.getElementById('res-iter').textContent = '---';
         document.getElementById('res-error').textContent = '---';
     }
     
+    // Calcular raíces
     const btnCalcularRaices = document.getElementById('btn-calcular-raices');
     if (btnCalcularRaices) {
         btnCalcularRaices.addEventListener('click', function() {
@@ -223,18 +283,22 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
+    // Botón COMPARAR (solo aquí se muestra el mejor método)
     const compareRaices = document.getElementById('compare-all-raices');
     if (compareRaices) {
         compareRaices.addEventListener('click', function() {
-            if (Object.keys(resultadosRaices).length === 0) alert('⚠️ No hay resultados. Calcula al menos un método.');
-            else actualizarTablaRaices();
+            if (Object.keys(resultadosRaices).length === 0) {
+                alert('⚠️ No hay resultados. Calcula al menos un método.');
+                return;
+            }
+            mostrarComparacionRaices();
         });
     }
     
     const clearRaices = document.getElementById('clear-raices');
     if (clearRaices) clearRaices.addEventListener('click', limpiarRaices);
     
-    // ==================== PESTAÑA 2: INTEGRALES ====================
+    // ==================== PESTAÑA 2: INTEGRALES (sin comparación) ====================
     const panelesIntegrales = ['trapezoidal-simple', 'trapezoidal-comp', 'simpson13'];
     
     function actualizarParametrosIntegrales() {
@@ -283,23 +347,24 @@ document.addEventListener('DOMContentLoaded', function() {
     function actualizarTablaIntegrales() {
         const tbody = document.getElementById('comparison-body-integrales');
         if (!tbody) return;
-        tbody.innerHTML = '';
         
         const orden = ['trapezoidal-simple', 'trapezoidal-comp', 'simpson13'];
-        orden.forEach(metodo => {
+        orden.forEach((metodo, idx) => {
             const res = resultadosIntegrales[metodo];
-            const row = tbody.insertRow();
+            let row = tbody.children[idx];
+            if (!row) row = tbody.insertRow();
+            
             if (res) {
-                row.insertCell(0).textContent = res.nombre;
-                row.insertCell(1).textContent = res.resultado;
-                row.insertCell(2).textContent = res.iteraciones;
-                row.insertCell(3).innerHTML = res.exito ? '✅ Éxito' : '❌ Error';
+                row.cells[0].textContent = res.nombre;
+                row.cells[1].textContent = res.resultado;
+                row.cells[2].textContent = res.iteraciones;
+                row.cells[3].innerHTML = res.exito ? '✅ Éxito' : '❌ Error';
                 row.cells[3].style.color = res.exito ? '#28a745' : '#dc3545';
             } else {
-                row.insertCell(0).textContent = nombresIntegrales[metodo];
-                row.insertCell(1).textContent = '---';
-                row.insertCell(2).textContent = '---';
-                row.insertCell(3).innerHTML = '⏳ Pendiente';
+                row.cells[0].textContent = nombresIntegrales[metodo];
+                row.cells[1].textContent = '---';
+                row.cells[2].textContent = '---';
+                row.cells[3].innerHTML = '⏳ Pendiente';
                 row.cells[3].style.color = '#ffc107';
             }
         });
@@ -307,7 +372,19 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function limpiarIntegrales() {
         resultadosIntegrales = {};
-        actualizarTablaIntegrales();
+        const tbody = document.getElementById('comparison-body-integrales');
+        if (tbody) {
+            const orden = ['trapezoidal-simple', 'trapezoidal-comp', 'simpson13'];
+            orden.forEach((metodo, idx) => {
+                const row = tbody.children[idx];
+                if (row) {
+                    row.cells[1].textContent = '---';
+                    row.cells[2].textContent = '---';
+                    row.cells[3].innerHTML = '⏳ Pendiente';
+                    row.cells[3].style.color = '#ffc107';
+                }
+            });
+        }
         document.getElementById('res-integral').textContent = '---';
         document.getElementById('res-integral-iter').textContent = '---';
     }
@@ -357,18 +434,10 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    const compareIntegrales = document.getElementById('compare-all-integrales');
-    if (compareIntegrales) {
-        compareIntegrales.addEventListener('click', function() {
-            if (Object.keys(resultadosIntegrales).length === 0) alert('⚠️ No hay resultados. Calcula al menos un método.');
-            else actualizarTablaIntegrales();
-        });
-    }
-    
     const clearIntegrales = document.getElementById('clear-integrales');
     if (clearIntegrales) clearIntegrales.addEventListener('click', limpiarIntegrales);
     
-    // ==================== PESTAÑA 3: EDO ====================
+    // ==================== PESTAÑA 3: EDO (sin comparación) ====================
     const panelesEDO = ['euler', 'rk4'];
     
     function actualizarParametrosEDO() {
@@ -413,23 +482,24 @@ document.addEventListener('DOMContentLoaded', function() {
     function actualizarTablaEDO() {
         const tbody = document.getElementById('comparison-body-edo');
         if (!tbody) return;
-        tbody.innerHTML = '';
         
         const orden = ['euler', 'rk4'];
-        orden.forEach(metodo => {
+        orden.forEach((metodo, idx) => {
             const res = resultadosEDO[metodo];
-            const row = tbody.insertRow();
+            let row = tbody.children[idx];
+            if (!row) row = tbody.insertRow();
+            
             if (res) {
-                row.insertCell(0).textContent = res.nombre;
-                row.insertCell(1).textContent = res.resultado;
-                row.insertCell(2).textContent = res.pasos;
-                row.insertCell(3).innerHTML = res.exito ? '✅ Éxito' : '❌ Error';
+                row.cells[0].textContent = res.nombre;
+                row.cells[1].textContent = res.resultado;
+                row.cells[2].textContent = res.pasos;
+                row.cells[3].innerHTML = res.exito ? '✅ Éxito' : '❌ Error';
                 row.cells[3].style.color = res.exito ? '#28a745' : '#dc3545';
             } else {
-                row.insertCell(0).textContent = nombresEDO[metodo];
-                row.insertCell(1).textContent = '---';
-                row.insertCell(2).textContent = '---';
-                row.insertCell(3).innerHTML = '⏳ Pendiente';
+                row.cells[0].textContent = nombresEDO[metodo];
+                row.cells[1].textContent = '---';
+                row.cells[2].textContent = '---';
+                row.cells[3].innerHTML = '⏳ Pendiente';
                 row.cells[3].style.color = '#ffc107';
             }
         });
@@ -437,7 +507,19 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function limpiarEDO() {
         resultadosEDO = {};
-        actualizarTablaEDO();
+        const tbody = document.getElementById('comparison-body-edo');
+        if (tbody) {
+            const orden = ['euler', 'rk4'];
+            orden.forEach((metodo, idx) => {
+                const row = tbody.children[idx];
+                if (row) {
+                    row.cells[1].textContent = '---';
+                    row.cells[2].textContent = '---';
+                    row.cells[3].innerHTML = '⏳ Pendiente';
+                    row.cells[3].style.color = '#ffc107';
+                }
+            });
+        }
         document.getElementById('res-edo').textContent = '---';
         document.getElementById('res-edo-pasos').textContent = '---';
     }
@@ -485,18 +567,10 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    const compareEDO = document.getElementById('compare-all-edo');
-    if (compareEDO) {
-        compareEDO.addEventListener('click', function() {
-            if (Object.keys(resultadosEDO).length === 0) alert('⚠️ No hay resultados. Calcula al menos un método.');
-            else actualizarTablaEDO();
-        });
-    }
-    
     const clearEDO = document.getElementById('clear-edo');
     if (clearEDO) clearEDO.addEventListener('click', limpiarEDO);
     
-    // ==================== PESTAÑA 4: SISTEMAS LINEALES ====================
+    // ==================== PESTAÑA 4: SISTEMAS LINEALES (sin comparación destacada) ====================
     const panelesSistemas = ['jacobi', 'gauss-seidel', 'gauss-simple', 'gauss-jordan'];
     
     function actualizarParametrosSistemas() {
@@ -539,8 +613,7 @@ document.addEventListener('DOMContentLoaded', function() {
             resultado: formatearResultado(solucion),
             iteraciones: iteraciones || '---',
             error: (error && typeof error === 'number') ? error.toExponential(4) : (error || '---'),
-            exito: exito,
-            errorNum: (typeof error === 'number') ? error : Infinity
+            exito: exito
         };
         actualizarTablaSistemas();
     }
@@ -548,54 +621,47 @@ document.addEventListener('DOMContentLoaded', function() {
     function actualizarTablaSistemas() {
         const tbody = document.getElementById('comparison-body-sistemas');
         if (!tbody) return;
-        tbody.innerHTML = '';
-        
-        let mejorMetodo = null;
-        let menorError = Infinity;
-        
-        for (const [metodo, res] of Object.entries(resultadosSistemas)) {
-            if (res.exito && res.errorNum < menorError && res.errorNum !== Infinity && metodo !== 'gauss-simple' && metodo !== 'gauss-jordan') {
-                menorError = res.errorNum;
-                mejorMetodo = metodo;
-            }
-        }
         
         const orden = ['jacobi', 'gauss-seidel', 'gauss-simple', 'gauss-jordan'];
-        orden.forEach(metodo => {
+        orden.forEach((metodo, idx) => {
             const res = resultadosSistemas[metodo];
-            const row = tbody.insertRow();
+            let row = tbody.children[idx];
+            if (!row) row = tbody.insertRow();
+            
             if (res) {
-                row.insertCell(0).textContent = res.nombre;
-                row.insertCell(1).textContent = res.resultado;
-                row.insertCell(2).textContent = res.iteraciones;
-                row.insertCell(3).textContent = res.error;
-                row.insertCell(4).innerHTML = res.exito ? '✅ Éxito' : '❌ Error';
+                row.cells[0].textContent = res.nombre;
+                row.cells[1].textContent = res.resultado;
+                row.cells[2].textContent = res.iteraciones;
+                row.cells[3].textContent = res.error;
+                row.cells[4].innerHTML = res.exito ? '✅ Éxito' : '❌ Error';
                 row.cells[4].style.color = res.exito ? '#28a745' : '#dc3545';
-                if (mejorMetodo === metodo) row.classList.add('best-result');
             } else {
-                row.insertCell(0).textContent = nombresSistemas[metodo];
-                row.insertCell(1).textContent = '---';
-                row.insertCell(2).textContent = '---';
-                row.insertCell(3).textContent = '---';
-                row.insertCell(4).innerHTML = '⏳ Pendiente';
+                row.cells[0].textContent = nombresSistemas[metodo];
+                row.cells[1].textContent = '---';
+                row.cells[2].textContent = '---';
+                row.cells[3].textContent = '---';
+                row.cells[4].innerHTML = '⏳ Pendiente';
                 row.cells[4].style.color = '#ffc107';
             }
         });
-        
-        const bestSection = document.getElementById('best-method-sistemas');
-        if (bestSection && mejorMetodo && menorError !== Infinity) {
-            const mejor = resultadosSistemas[mejorMetodo];
-            bestSection.style.display = 'block';
-            document.getElementById('best-name-sistemas').textContent = mejor.nombre;
-            document.getElementById('best-details-sistemas').innerHTML = `Error: ${menorError.toExponential(4)} | Iteraciones: ${mejor.iteraciones} | Solución: ${mejor.resultado}`;
-        } else if (bestSection) {
-            bestSection.style.display = 'none';
-        }
     }
     
     function limpiarSistemas() {
         resultadosSistemas = {};
-        actualizarTablaSistemas();
+        const tbody = document.getElementById('comparison-body-sistemas');
+        if (tbody) {
+            const orden = ['jacobi', 'gauss-seidel', 'gauss-simple', 'gauss-jordan'];
+            orden.forEach((metodo, idx) => {
+                const row = tbody.children[idx];
+                if (row) {
+                    row.cells[1].textContent = '---';
+                    row.cells[2].textContent = '---';
+                    row.cells[3].textContent = '---';
+                    row.cells[4].innerHTML = '⏳ Pendiente';
+                    row.cells[4].style.color = '#ffc107';
+                }
+            });
+        }
         document.getElementById('res-solucion').textContent = '---';
         document.getElementById('res-sis-iter').textContent = '---';
         document.getElementById('res-sis-error').textContent = '---';
@@ -660,14 +726,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    const compareSistemas = document.getElementById('compare-all-sistemas');
-    if (compareSistemas) {
-        compareSistemas.addEventListener('click', function() {
-            if (Object.keys(resultadosSistemas).length === 0) alert('⚠️ No hay resultados. Calcula al menos un método.');
-            else actualizarTablaSistemas();
-        });
-    }
-    
     const clearSistemas = document.getElementById('clear-sistemas');
     if (clearSistemas) clearSistemas.addEventListener('click', limpiarSistemas);
     
@@ -681,7 +739,7 @@ document.addEventListener('DOMContentLoaded', function() {
     actualizarParametrosSistemas();
     actualizarEstiloBotonesSistemas();
     
-    // Inicializar tablas vacías
+    // Inicializar tablas vacías (solo estructura)
     function inicializarTablasVacias() {
         const ordenRaices = ['biseccion', 'regula-falsi', 'newton', 'secante', 'punto-fijo'];
         const tbodyRaices = document.getElementById('comparison-body-raices');
