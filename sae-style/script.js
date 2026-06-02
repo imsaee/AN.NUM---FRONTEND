@@ -8,10 +8,8 @@ document.addEventListener('DOMContentLoaded', function() {
     tabBtns.forEach(btn => {
         btn.addEventListener('click', function() {
             const tabId = this.getAttribute('data-tab');
-            
             tabBtns.forEach(b => b.classList.remove('active'));
             tabContents.forEach(c => c.classList.remove('active'));
-            
             this.classList.add('active');
             document.getElementById(`tab-${tabId}`).classList.add('active');
         });
@@ -60,29 +58,25 @@ document.addEventListener('DOMContentLoaded', function() {
     function actualizarParametrosRaices() {
         const metodo = document.querySelector('input[name="metodo-raices"]:checked');
         if (!metodo) return;
-        const metodoValue = metodo.value;
         panelesRaices.forEach(id => {
             const panel = document.getElementById(`params-${id}`);
-            if (panel) panel.style.display = (id === metodoValue) ? 'flex' : 'none';
+            if (panel) panel.style.display = (id === metodo.value) ? 'flex' : 'none';
         });
     }
     
     function actualizarEstiloBotonesRaices() {
-        const btns = document.querySelectorAll('#selector-metodos-raices .method-btn');
-        btns.forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('#selector-metodos-raices .method-btn').forEach(btn => btn.classList.remove('active'));
         const radio = document.querySelector('input[name="metodo-raices"]:checked');
         if (radio) radio.closest('.method-btn').classList.add('active');
     }
     
-    const radiosRaices = document.querySelectorAll('input[name="metodo-raices"]');
-    radiosRaices.forEach(radio => {
+    document.querySelectorAll('input[name="metodo-raices"]').forEach(radio => {
         radio.addEventListener('change', function() {
             actualizarParametrosRaices();
             actualizarEstiloBotonesRaices();
         });
     });
     
-    // Almacenamiento resultados raíces (solo para comparación)
     let resultadosRaices = {};
     
     const nombresRaices = {
@@ -93,7 +87,7 @@ document.addEventListener('DOMContentLoaded', function() {
         'punto-fijo': 'Punto Fijo'
     };
     
-    // Guardar resultado (sin mostrar comparación automáticamente)
+    // Guardar resultado SIN mostrar comparación
     function guardarResultadoRaiz(metodo, raiz, iteraciones, error, exito) {
         resultadosRaices[metodo] = {
             nombre: nombresRaices[metodo],
@@ -103,11 +97,10 @@ document.addEventListener('DOMContentLoaded', function() {
             exito: exito,
             errorNum: (typeof error === 'number') ? error : Infinity
         };
-        // Solo actualizar la tabla visual, sin mostrar el mejor método aún
         actualizarTablaRaicesSinMejor();
     }
     
-    // Actualizar tabla SIN mostrar el mejor método (después de cada cálculo)
+    // Actualizar tabla SIN mostrar el mejor método
     function actualizarTablaRaicesSinMejor() {
         const tbody = document.getElementById('comparison-body-raices');
         if (!tbody) return;
@@ -135,18 +128,16 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
         
-        // Ocultar la tarjeta del mejor método hasta que se presione "Comparar"
         const bestSection = document.getElementById('best-method-raices');
         if (bestSection) bestSection.style.display = 'none';
     }
     
-    // Mostrar comparación con el mejor método (solo al presionar el botón)
+    // Mostrar comparación SOLO al presionar el botón
     function mostrarComparacionRaices() {
         const tbody = document.getElementById('comparison-body-raices');
         if (!tbody) return;
-        tbody.innerHTML = '';
         
-        // Encontrar el mejor método (menor error)
+        // Encontrar el mejor método
         let mejorMetodo = null;
         let menorError = Infinity;
         
@@ -157,6 +148,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         
+        // Reconstruir tabla con resaltado
+        tbody.innerHTML = '';
         const orden = ['biseccion', 'regula-falsi', 'newton', 'secante', 'punto-fijo'];
         orden.forEach(metodo => {
             const res = resultadosRaices[metodo];
@@ -179,7 +172,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
         
-        // Mostrar tarjeta del mejor método
         const bestSection = document.getElementById('best-method-raices');
         if (bestSection && mejorMetodo && menorError !== Infinity) {
             const mejor = resultadosRaices[mejorMetodo];
@@ -200,16 +192,15 @@ document.addEventListener('DOMContentLoaded', function() {
         const tbody = document.getElementById('comparison-body-raices');
         if (tbody) {
             const orden = ['biseccion', 'regula-falsi', 'newton', 'secante', 'punto-fijo'];
+            tbody.innerHTML = '';
             orden.forEach(metodo => {
-                const row = tbody.children[orden.indexOf(metodo)];
-                if (row) {
-                    row.cells[1].textContent = '---';
-                    row.cells[2].textContent = '---';
-                    row.cells[3].textContent = '---';
-                    row.cells[4].innerHTML = '⏳ Pendiente';
-                    row.cells[4].style.color = '#ffc107';
-                    row.classList.remove('best-result');
-                }
+                const row = tbody.insertRow();
+                row.insertCell(0).textContent = nombresRaices[metodo];
+                row.insertCell(1).textContent = '---';
+                row.insertCell(2).textContent = '---';
+                row.insertCell(3).textContent = '---';
+                row.insertCell(4).innerHTML = '⏳ Pendiente';
+                row.cells[4].style.color = '#ffc107';
             });
         }
         const bestSection = document.getElementById('best-method-raices');
@@ -220,106 +211,96 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Calcular raíces
-    const btnCalcularRaices = document.getElementById('btn-calcular-raices');
-    if (btnCalcularRaices) {
-        btnCalcularRaices.addEventListener('click', function() {
-            const metodo = document.querySelector('input[name="metodo-raices"]:checked');
-            if (!metodo) return;
-            const metodoValue = metodo.value;
-            const maxIter = 100;
-            const funcStr = document.getElementById('func-raices').value;
-            const f = x => math.evaluate(funcStr, { x });
+    document.getElementById('btn-calcular-raices').addEventListener('click', function() {
+        const metodo = document.querySelector('input[name="metodo-raices"]:checked');
+        if (!metodo) return;
+        const metodoValue = metodo.value;
+        const maxIter = 100;
+        const funcStr = document.getElementById('func-raices').value;
+        const f = x => math.evaluate(funcStr, { x });
+        
+        try {
+            let resultado, iteraciones = 0, errorFinal = 0;
             
-            try {
-                let resultado, iteraciones = 0, errorFinal = 0;
-                
-                if (metodoValue === 'biseccion') {
-                    resultado = metodoBiseccion(f, 
-                        parseFloat(document.getElementById('bis-a').value),
-                        parseFloat(document.getElementById('bis-b').value),
-                        parseFloat(document.getElementById('bis-tol').value), maxIter);
-                } else if (metodoValue === 'regula-falsi') {
-                    resultado = metodoRegulaFalsi(f,
-                        parseFloat(document.getElementById('rf-a').value),
-                        parseFloat(document.getElementById('rf-b').value),
-                        parseFloat(document.getElementById('rf-tol').value), maxIter);
-                } else if (metodoValue === 'newton') {
-                    const df = x => math.derivative(funcStr, 'x').evaluate({ x });
-                    resultado = metodoNewton(f, df,
-                        parseFloat(document.getElementById('nr-x0').value),
-                        parseFloat(document.getElementById('nr-tol').value), maxIter);
-                } else if (metodoValue === 'secante') {
-                    resultado = metodoSecante(f,
-                        parseFloat(document.getElementById('sc-x0').value),
-                        parseFloat(document.getElementById('sc-x1').value),
-                        parseFloat(document.getElementById('sc-tol').value), maxIter);
-                } else if (metodoValue === 'punto-fijo') {
-                    resultado = metodoPuntoFijo(f,
-                        parseFloat(document.getElementById('pf-x0').value),
-                        parseFloat(document.getElementById('pf-tol').value), maxIter);
-                }
-                
-                iteraciones = resultado.pasos.length;
-                errorFinal = resultado.pasos[iteraciones - 1].error;
-                const raiz = resultado.raiz;
-                
-                document.getElementById('res-raiz').textContent = raiz.toFixed(6);
-                document.getElementById('res-iter').textContent = iteraciones;
-                document.getElementById('res-error').textContent = errorFinal.toExponential(4);
-                
-                guardarResultadoRaiz(metodoValue, raiz, iteraciones, errorFinal, true);
-                
-                if (curvaRaices) boardRaices.removeObject(curvaRaices);
-                if (puntoRaiz) boardRaices.removeObject(puntoRaiz);
-                curvaRaices = boardRaices.create('functiongraph', [x => math.evaluate(funcStr, { x })], { strokeColor: '#197278', strokeWidth: 2 });
-                puntoRaiz = boardRaices.create('point', [raiz, 0], { name: `x = ${raiz.toFixed(4)}`, color: '#c44536', size: 4, fixed: true });
-                
-            } catch (e) {
-                console.error(e);
-                document.getElementById('res-raiz').textContent = 'ERROR';
-                document.getElementById('res-error').textContent = e.message;
-                guardarResultadoRaiz(metodoValue, null, null, e.message, false);
+            if (metodoValue === 'biseccion') {
+                resultado = metodoBiseccion(f, 
+                    parseFloat(document.getElementById('bis-a').value),
+                    parseFloat(document.getElementById('bis-b').value),
+                    parseFloat(document.getElementById('bis-tol').value), maxIter);
+            } else if (metodoValue === 'regula-falsi') {
+                resultado = metodoRegulaFalsi(f,
+                    parseFloat(document.getElementById('rf-a').value),
+                    parseFloat(document.getElementById('rf-b').value),
+                    parseFloat(document.getElementById('rf-tol').value), maxIter);
+            } else if (metodoValue === 'newton') {
+                const df = x => math.derivative(funcStr, 'x').evaluate({ x });
+                resultado = metodoNewton(f, df,
+                    parseFloat(document.getElementById('nr-x0').value),
+                    parseFloat(document.getElementById('nr-tol').value), maxIter);
+            } else if (metodoValue === 'secante') {
+                resultado = metodoSecante(f,
+                    parseFloat(document.getElementById('sc-x0').value),
+                    parseFloat(document.getElementById('sc-x1').value),
+                    parseFloat(document.getElementById('sc-tol').value), maxIter);
+            } else if (metodoValue === 'punto-fijo') {
+                resultado = metodoPuntoFijo(f,
+                    parseFloat(document.getElementById('pf-x0').value),
+                    parseFloat(document.getElementById('pf-tol').value), maxIter);
             }
-        });
-    }
+            
+            iteraciones = resultado.pasos.length;
+            errorFinal = resultado.pasos[iteraciones - 1].error;
+            const raiz = resultado.raiz;
+            
+            document.getElementById('res-raiz').textContent = raiz.toFixed(6);
+            document.getElementById('res-iter').textContent = iteraciones;
+            document.getElementById('res-error').textContent = errorFinal.toExponential(4);
+            
+            guardarResultadoRaiz(metodoValue, raiz, iteraciones, errorFinal, true);
+            
+            if (curvaRaices) boardRaices.removeObject(curvaRaices);
+            if (puntoRaiz) boardRaices.removeObject(puntoRaiz);
+            curvaRaices = boardRaices.create('functiongraph', [x => math.evaluate(funcStr, { x })], { strokeColor: '#197278', strokeWidth: 2 });
+            puntoRaiz = boardRaices.create('point', [raiz, 0], { name: `x = ${raiz.toFixed(4)}`, color: '#c44536', size: 4, fixed: true });
+            
+        } catch (e) {
+            console.error(e);
+            document.getElementById('res-raiz').textContent = 'ERROR';
+            document.getElementById('res-error').textContent = e.message;
+            guardarResultadoRaiz(metodoValue, null, null, e.message, false);
+        }
+    });
     
     // Botón COMPARAR (solo aquí se muestra el mejor método)
-    const compareRaices = document.getElementById('compare-all-raices');
-    if (compareRaices) {
-        compareRaices.addEventListener('click', function() {
-            if (Object.keys(resultadosRaices).length === 0) {
-                alert('⚠️ No hay resultados. Calcula al menos un método.');
-                return;
-            }
-            mostrarComparacionRaices();
-        });
-    }
+    document.getElementById('compare-all-raices').addEventListener('click', function() {
+        if (Object.keys(resultadosRaices).length === 0) {
+            alert('⚠️ No hay resultados. Calcula al menos un método.');
+            return;
+        }
+        mostrarComparacionRaices();
+    });
     
-    const clearRaices = document.getElementById('clear-raices');
-    if (clearRaices) clearRaices.addEventListener('click', limpiarRaices);
+    document.getElementById('clear-raices').addEventListener('click', limpiarRaices);
     
-    // ==================== PESTAÑA 2: INTEGRALES (sin comparación) ====================
+    // ==================== PESTAÑA 2: INTEGRALES (solo registro) ====================
     const panelesIntegrales = ['trapezoidal-simple', 'trapezoidal-comp', 'simpson13'];
     
     function actualizarParametrosIntegrales() {
         const metodo = document.querySelector('input[name="metodo-integrales"]:checked');
         if (!metodo) return;
-        const metodoValue = metodo.value;
         panelesIntegrales.forEach(id => {
             const panel = document.getElementById(`params-integral-${id}`);
-            if (panel) panel.style.display = (id === metodoValue) ? 'flex' : 'none';
+            if (panel) panel.style.display = (id === metodo.value) ? 'flex' : 'none';
         });
     }
     
     function actualizarEstiloBotonesIntegrales() {
-        const btns = document.querySelectorAll('#selector-metodos-integrales .method-btn');
-        btns.forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('#selector-metodos-integrales .method-btn').forEach(btn => btn.classList.remove('active'));
         const radio = document.querySelector('input[name="metodo-integrales"]:checked');
         if (radio) radio.closest('.method-btn').classList.add('active');
     }
     
-    const radiosIntegrales = document.querySelectorAll('input[name="metodo-integrales"]');
-    radiosIntegrales.forEach(radio => {
+    document.querySelectorAll('input[name="metodo-integrales"]').forEach(radio => {
         radio.addEventListener('change', function() {
             actualizarParametrosIntegrales();
             actualizarEstiloBotonesIntegrales();
@@ -334,37 +315,26 @@ document.addEventListener('DOMContentLoaded', function() {
         'simpson13': 'Simpson 1/3'
     };
     
-    function guardarResultadoIntegral(metodo, valor, iteraciones, exito) {
-        resultadosIntegrales[metodo] = {
-            nombre: nombresIntegrales[metodo],
-            resultado: formatearResultado(valor),
-            iteraciones: iteraciones || '---',
-            exito: exito
-        };
-        actualizarTablaIntegrales();
-    }
-    
     function actualizarTablaIntegrales() {
         const tbody = document.getElementById('comparison-body-integrales');
         if (!tbody) return;
+        tbody.innerHTML = '';
         
         const orden = ['trapezoidal-simple', 'trapezoidal-comp', 'simpson13'];
-        orden.forEach((metodo, idx) => {
+        orden.forEach(metodo => {
             const res = resultadosIntegrales[metodo];
-            let row = tbody.children[idx];
-            if (!row) row = tbody.insertRow();
-            
+            const row = tbody.insertRow();
             if (res) {
-                row.cells[0].textContent = res.nombre;
-                row.cells[1].textContent = res.resultado;
-                row.cells[2].textContent = res.iteraciones;
-                row.cells[3].innerHTML = res.exito ? '✅ Éxito' : '❌ Error';
+                row.insertCell(0).textContent = res.nombre;
+                row.insertCell(1).textContent = res.resultado;
+                row.insertCell(2).textContent = res.iteraciones;
+                row.insertCell(3).innerHTML = res.exito ? '✅ Éxito' : '❌ Error';
                 row.cells[3].style.color = res.exito ? '#28a745' : '#dc3545';
             } else {
-                row.cells[0].textContent = nombresIntegrales[metodo];
-                row.cells[1].textContent = '---';
-                row.cells[2].textContent = '---';
-                row.cells[3].innerHTML = '⏳ Pendiente';
+                row.insertCell(0).textContent = nombresIntegrales[metodo];
+                row.insertCell(1).textContent = '---';
+                row.insertCell(2).textContent = '---';
+                row.insertCell(3).innerHTML = '⏳ Pendiente';
                 row.cells[3].style.color = '#ffc107';
             }
         });
@@ -375,90 +345,95 @@ document.addEventListener('DOMContentLoaded', function() {
         const tbody = document.getElementById('comparison-body-integrales');
         if (tbody) {
             const orden = ['trapezoidal-simple', 'trapezoidal-comp', 'simpson13'];
-            orden.forEach((metodo, idx) => {
-                const row = tbody.children[idx];
-                if (row) {
-                    row.cells[1].textContent = '---';
-                    row.cells[2].textContent = '---';
-                    row.cells[3].innerHTML = '⏳ Pendiente';
-                    row.cells[3].style.color = '#ffc107';
-                }
+            tbody.innerHTML = '';
+            orden.forEach(metodo => {
+                const row = tbody.insertRow();
+                row.insertCell(0).textContent = nombresIntegrales[metodo];
+                row.insertCell(1).textContent = '---';
+                row.insertCell(2).textContent = '---';
+                row.insertCell(3).innerHTML = '⏳ Pendiente';
+                row.cells[3].style.color = '#ffc107';
             });
         }
         document.getElementById('res-integral').textContent = '---';
         document.getElementById('res-integral-iter').textContent = '---';
     }
     
-    const btnCalcularIntegrales = document.getElementById('btn-calcular-integrales');
-    if (btnCalcularIntegrales) {
-        btnCalcularIntegrales.addEventListener('click', function() {
-            const metodo = document.querySelector('input[name="metodo-integrales"]:checked');
-            if (!metodo) return;
-            const metodoValue = metodo.value;
-            const funcStr = document.getElementById('func-integrales').value;
-            const f = x => math.evaluate(funcStr, { x });
+    document.getElementById('btn-calcular-integrales').addEventListener('click', function() {
+        const metodo = document.querySelector('input[name="metodo-integrales"]:checked');
+        if (!metodo) return;
+        const metodoValue = metodo.value;
+        const funcStr = document.getElementById('func-integrales').value;
+        const f = x => math.evaluate(funcStr, { x });
+        
+        try {
+            let resultado, iteraciones = 1;
             
-            try {
-                let resultado, iteraciones = 1;
-                
-                if (metodoValue === 'trapezoidal-simple') {
-                    const a = parseFloat(document.getElementById('int-trap-simple-a').value);
-                    const b = parseFloat(document.getElementById('int-trap-simple-b').value);
-                    resultado = reglaTrapezoidalSimple(a, b, f);
-                } else if (metodoValue === 'trapezoidal-comp') {
-                    const a = parseFloat(document.getElementById('int-trap-comp-a').value);
-                    const b = parseFloat(document.getElementById('int-trap-comp-b').value);
-                    const n = parseInt(document.getElementById('int-trap-comp-n').value);
-                    resultado = reglaTrapezoidalComp(a, b, n, f);
-                    iteraciones = n;
-                } else if (metodoValue === 'simpson13') {
-                    const a = parseFloat(document.getElementById('int-simp-a').value);
-                    const b = parseFloat(document.getElementById('int-simp-b').value);
-                    resultado = reglaSimpson13Simple(a, b, f);
-                }
-                
-                const valor = resultado.raiz;
-                document.getElementById('res-integral').textContent = valor.toFixed(6);
-                document.getElementById('res-integral-iter').textContent = iteraciones;
-                
-                guardarResultadoIntegral(metodoValue, valor, iteraciones, true);
-                
-                if (curvaIntegrales) boardIntegrales.removeObject(curvaIntegrales);
-                curvaIntegrales = boardIntegrales.create('functiongraph', [x => math.evaluate(funcStr, { x })], { strokeColor: '#197278', strokeWidth: 2 });
-                
-            } catch (e) {
-                console.error(e);
-                document.getElementById('res-integral').textContent = 'ERROR';
-                guardarResultadoIntegral(metodoValue, null, null, false);
+            if (metodoValue === 'trapezoidal-simple') {
+                const a = parseFloat(document.getElementById('int-trap-simple-a').value);
+                const b = parseFloat(document.getElementById('int-trap-simple-b').value);
+                resultado = reglaTrapezoidalSimple(a, b, f);
+            } else if (metodoValue === 'trapezoidal-comp') {
+                const a = parseFloat(document.getElementById('int-trap-comp-a').value);
+                const b = parseFloat(document.getElementById('int-trap-comp-b').value);
+                const n = parseInt(document.getElementById('int-trap-comp-n').value);
+                resultado = reglaTrapezoidalComp(a, b, n, f);
+                iteraciones = n;
+            } else if (metodoValue === 'simpson13') {
+                const a = parseFloat(document.getElementById('int-simp-a').value);
+                const b = parseFloat(document.getElementById('int-simp-b').value);
+                resultado = reglaSimpson13Simple(a, b, f);
             }
-        });
-    }
+            
+            const valor = resultado.raiz;
+            document.getElementById('res-integral').textContent = valor.toFixed(6);
+            document.getElementById('res-integral-iter').textContent = iteraciones;
+            
+            resultadosIntegrales[metodoValue] = {
+                nombre: nombresIntegrales[metodoValue],
+                resultado: formatearResultado(valor),
+                iteraciones: iteraciones,
+                exito: true
+            };
+            actualizarTablaIntegrales();
+            
+            if (curvaIntegrales) boardIntegrales.removeObject(curvaIntegrales);
+            curvaIntegrales = boardIntegrales.create('functiongraph', [x => math.evaluate(funcStr, { x })], { strokeColor: '#197278', strokeWidth: 2 });
+            
+        } catch (e) {
+            console.error(e);
+            document.getElementById('res-integral').textContent = 'ERROR';
+            resultadosIntegrales[metodoValue] = {
+                nombre: nombresIntegrales[metodoValue],
+                resultado: 'ERROR',
+                iteraciones: '---',
+                exito: false
+            };
+            actualizarTablaIntegrales();
+        }
+    });
     
-    const clearIntegrales = document.getElementById('clear-integrales');
-    if (clearIntegrales) clearIntegrales.addEventListener('click', limpiarIntegrales);
+    document.getElementById('clear-integrales').addEventListener('click', limpiarIntegrales);
     
-    // ==================== PESTAÑA 3: EDO (sin comparación) ====================
+    // ==================== PESTAÑA 3: EDO (solo registro) ====================
     const panelesEDO = ['euler', 'rk4'];
     
     function actualizarParametrosEDO() {
         const metodo = document.querySelector('input[name="metodo-edo"]:checked');
         if (!metodo) return;
-        const metodoValue = metodo.value;
         panelesEDO.forEach(id => {
             const panel = document.getElementById(`params-edo-${id}`);
-            if (panel) panel.style.display = (id === metodoValue) ? 'flex' : 'none';
+            if (panel) panel.style.display = (id === metodo.value) ? 'flex' : 'none';
         });
     }
     
     function actualizarEstiloBotonesEDO() {
-        const btns = document.querySelectorAll('#selector-metodos-edo .method-btn');
-        btns.forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('#selector-metodos-edo .method-btn').forEach(btn => btn.classList.remove('active'));
         const radio = document.querySelector('input[name="metodo-edo"]:checked');
         if (radio) radio.closest('.method-btn').classList.add('active');
     }
     
-    const radiosEDO = document.querySelectorAll('input[name="metodo-edo"]');
-    radiosEDO.forEach(radio => {
+    document.querySelectorAll('input[name="metodo-edo"]').forEach(radio => {
         radio.addEventListener('change', function() {
             actualizarParametrosEDO();
             actualizarEstiloBotonesEDO();
@@ -469,37 +444,26 @@ document.addEventListener('DOMContentLoaded', function() {
     
     const nombresEDO = { 'euler': 'Euler', 'rk4': 'Runge-Kutta 4' };
     
-    function guardarResultadoEDO(metodo, valor, pasos, exito) {
-        resultadosEDO[metodo] = {
-            nombre: nombresEDO[metodo],
-            resultado: formatearResultado(valor),
-            pasos: pasos || '---',
-            exito: exito
-        };
-        actualizarTablaEDO();
-    }
-    
     function actualizarTablaEDO() {
         const tbody = document.getElementById('comparison-body-edo');
         if (!tbody) return;
+        tbody.innerHTML = '';
         
         const orden = ['euler', 'rk4'];
-        orden.forEach((metodo, idx) => {
+        orden.forEach(metodo => {
             const res = resultadosEDO[metodo];
-            let row = tbody.children[idx];
-            if (!row) row = tbody.insertRow();
-            
+            const row = tbody.insertRow();
             if (res) {
-                row.cells[0].textContent = res.nombre;
-                row.cells[1].textContent = res.resultado;
-                row.cells[2].textContent = res.pasos;
-                row.cells[3].innerHTML = res.exito ? '✅ Éxito' : '❌ Error';
+                row.insertCell(0).textContent = res.nombre;
+                row.insertCell(1).textContent = res.resultado;
+                row.insertCell(2).textContent = res.pasos;
+                row.insertCell(3).innerHTML = res.exito ? '✅ Éxito' : '❌ Error';
                 row.cells[3].style.color = res.exito ? '#28a745' : '#dc3545';
             } else {
-                row.cells[0].textContent = nombresEDO[metodo];
-                row.cells[1].textContent = '---';
-                row.cells[2].textContent = '---';
-                row.cells[3].innerHTML = '⏳ Pendiente';
+                row.insertCell(0).textContent = nombresEDO[metodo];
+                row.insertCell(1).textContent = '---';
+                row.insertCell(2).textContent = '---';
+                row.insertCell(3).innerHTML = '⏳ Pendiente';
                 row.cells[3].style.color = '#ffc107';
             }
         });
@@ -510,88 +474,93 @@ document.addEventListener('DOMContentLoaded', function() {
         const tbody = document.getElementById('comparison-body-edo');
         if (tbody) {
             const orden = ['euler', 'rk4'];
-            orden.forEach((metodo, idx) => {
-                const row = tbody.children[idx];
-                if (row) {
-                    row.cells[1].textContent = '---';
-                    row.cells[2].textContent = '---';
-                    row.cells[3].innerHTML = '⏳ Pendiente';
-                    row.cells[3].style.color = '#ffc107';
-                }
+            tbody.innerHTML = '';
+            orden.forEach(metodo => {
+                const row = tbody.insertRow();
+                row.insertCell(0).textContent = nombresEDO[metodo];
+                row.insertCell(1).textContent = '---';
+                row.insertCell(2).textContent = '---';
+                row.insertCell(3).innerHTML = '⏳ Pendiente';
+                row.cells[3].style.color = '#ffc107';
             });
         }
         document.getElementById('res-edo').textContent = '---';
         document.getElementById('res-edo-pasos').textContent = '---';
     }
     
-    const btnCalcularEDO = document.getElementById('btn-calcular-edo');
-    if (btnCalcularEDO) {
-        btnCalcularEDO.addEventListener('click', function() {
-            const metodo = document.querySelector('input[name="metodo-edo"]:checked');
-            if (!metodo) return;
-            const metodoValue = metodo.value;
-            const derivsStr = document.getElementById('func-edo').value;
+    document.getElementById('btn-calcular-edo').addEventListener('click', function() {
+        const metodo = document.querySelector('input[name="metodo-edo"]:checked');
+        if (!metodo) return;
+        const metodoValue = metodo.value;
+        const derivsStr = document.getElementById('func-edo').value;
+        
+        try {
+            let resultado;
             
-            try {
-                let resultado;
-                
-                if (metodoValue === 'euler') {
-                    const xi = parseFloat(document.getElementById('edo-euler-xi').value);
-                    const yi = parseFloat(document.getElementById('edo-euler-yi').value);
-                    const xf = parseFloat(document.getElementById('edo-euler-xf').value);
-                    const h = parseFloat(document.getElementById('edo-euler-h').value);
-                    const derivs = (x, y) => math.evaluate(derivsStr, { x, y });
-                    resultado = metodoEulerModular(xi, yi, xf, h, h, derivs);
-                } else if (metodoValue === 'rk4') {
-                    const xi = parseFloat(document.getElementById('edo-rk4-xi').value);
-                    const yi = parseFloat(document.getElementById('edo-rk4-yi').value);
-                    const xf = parseFloat(document.getElementById('edo-rk4-xf').value);
-                    const h = parseFloat(document.getElementById('edo-rk4-h').value);
-                    const derivs = (x, y) => math.evaluate(derivsStr, { x, y });
-                    resultado = metodoRK4Modular(xi, [yi], xf, h, h, derivs);
-                }
-                
-                const valor = resultado.raiz;
-                const pasos = resultado.pasos.length;
-                
-                document.getElementById('res-edo').textContent = valor.toFixed(6);
-                document.getElementById('res-edo-pasos').textContent = pasos;
-                
-                guardarResultadoEDO(metodoValue, valor, pasos, true);
-                
-            } catch (e) {
-                console.error(e);
-                document.getElementById('res-edo').textContent = 'ERROR';
-                guardarResultadoEDO(metodoValue, null, null, false);
+            if (metodoValue === 'euler') {
+                const xi = parseFloat(document.getElementById('edo-euler-xi').value);
+                const yi = parseFloat(document.getElementById('edo-euler-yi').value);
+                const xf = parseFloat(document.getElementById('edo-euler-xf').value);
+                const h = parseFloat(document.getElementById('edo-euler-h').value);
+                const derivs = (x, y) => math.evaluate(derivsStr, { x, y });
+                resultado = metodoEulerModular(xi, yi, xf, h, h, derivs);
+            } else if (metodoValue === 'rk4') {
+                const xi = parseFloat(document.getElementById('edo-rk4-xi').value);
+                const yi = parseFloat(document.getElementById('edo-rk4-yi').value);
+                const xf = parseFloat(document.getElementById('edo-rk4-xf').value);
+                const h = parseFloat(document.getElementById('edo-rk4-h').value);
+                const derivs = (x, y) => math.evaluate(derivsStr, { x, y });
+                resultado = metodoRK4Modular(xi, [yi], xf, h, h, derivs);
             }
-        });
-    }
+            
+            const valor = resultado.raiz;
+            const pasos = resultado.pasos.length;
+            
+            document.getElementById('res-edo').textContent = valor.toFixed(6);
+            document.getElementById('res-edo-pasos').textContent = pasos;
+            
+            resultadosEDO[metodoValue] = {
+                nombre: nombresEDO[metodoValue],
+                resultado: formatearResultado(valor),
+                pasos: pasos,
+                exito: true
+            };
+            actualizarTablaEDO();
+            
+        } catch (e) {
+            console.error(e);
+            document.getElementById('res-edo').textContent = 'ERROR';
+            resultadosEDO[metodoValue] = {
+                nombre: nombresEDO[metodoValue],
+                resultado: 'ERROR',
+                pasos: '---',
+                exito: false
+            };
+            actualizarTablaEDO();
+        }
+    });
     
-    const clearEDO = document.getElementById('clear-edo');
-    if (clearEDO) clearEDO.addEventListener('click', limpiarEDO);
+    document.getElementById('clear-edo').addEventListener('click', limpiarEDO);
     
-    // ==================== PESTAÑA 4: SISTEMAS LINEALES (sin comparación destacada) ====================
+    // ==================== PESTAÑA 4: SISTEMAS LINEALES (solo registro) ====================
     const panelesSistemas = ['jacobi', 'gauss-seidel', 'gauss-simple', 'gauss-jordan'];
     
     function actualizarParametrosSistemas() {
         const metodo = document.querySelector('input[name="metodo-sistemas"]:checked');
         if (!metodo) return;
-        const metodoValue = metodo.value;
         panelesSistemas.forEach(id => {
             const panel = document.getElementById(`params-sis-${id}`);
-            if (panel) panel.style.display = (id === metodoValue) ? 'flex' : 'none';
+            if (panel) panel.style.display = (id === metodo.value) ? 'flex' : 'none';
         });
     }
     
     function actualizarEstiloBotonesSistemas() {
-        const btns = document.querySelectorAll('#selector-metodos-sistemas .method-btn');
-        btns.forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('#selector-metodos-sistemas .method-btn').forEach(btn => btn.classList.remove('active'));
         const radio = document.querySelector('input[name="metodo-sistemas"]:checked');
         if (radio) radio.closest('.method-btn').classList.add('active');
     }
     
-    const radiosSistemas = document.querySelectorAll('input[name="metodo-sistemas"]');
-    radiosSistemas.forEach(radio => {
+    document.querySelectorAll('input[name="metodo-sistemas"]').forEach(radio => {
         radio.addEventListener('change', function() {
             actualizarParametrosSistemas();
             actualizarEstiloBotonesSistemas();
@@ -607,40 +576,28 @@ document.addEventListener('DOMContentLoaded', function() {
         'gauss-jordan': 'Gauss-Jordan'
     };
     
-    function guardarResultadoSistema(metodo, solucion, iteraciones, error, exito) {
-        resultadosSistemas[metodo] = {
-            nombre: nombresSistemas[metodo],
-            resultado: formatearResultado(solucion),
-            iteraciones: iteraciones || '---',
-            error: (error && typeof error === 'number') ? error.toExponential(4) : (error || '---'),
-            exito: exito
-        };
-        actualizarTablaSistemas();
-    }
-    
     function actualizarTablaSistemas() {
         const tbody = document.getElementById('comparison-body-sistemas');
         if (!tbody) return;
+        tbody.innerHTML = '';
         
         const orden = ['jacobi', 'gauss-seidel', 'gauss-simple', 'gauss-jordan'];
-        orden.forEach((metodo, idx) => {
+        orden.forEach(metodo => {
             const res = resultadosSistemas[metodo];
-            let row = tbody.children[idx];
-            if (!row) row = tbody.insertRow();
-            
+            const row = tbody.insertRow();
             if (res) {
-                row.cells[0].textContent = res.nombre;
-                row.cells[1].textContent = res.resultado;
-                row.cells[2].textContent = res.iteraciones;
-                row.cells[3].textContent = res.error;
-                row.cells[4].innerHTML = res.exito ? '✅ Éxito' : '❌ Error';
+                row.insertCell(0).textContent = res.nombre;
+                row.insertCell(1).textContent = res.resultado;
+                row.insertCell(2).textContent = res.iteraciones;
+                row.insertCell(3).textContent = res.error;
+                row.insertCell(4).innerHTML = res.exito ? '✅ Éxito' : '❌ Error';
                 row.cells[4].style.color = res.exito ? '#28a745' : '#dc3545';
             } else {
-                row.cells[0].textContent = nombresSistemas[metodo];
-                row.cells[1].textContent = '---';
-                row.cells[2].textContent = '---';
-                row.cells[3].textContent = '---';
-                row.cells[4].innerHTML = '⏳ Pendiente';
+                row.insertCell(0).textContent = nombresSistemas[metodo];
+                row.insertCell(1).textContent = '---';
+                row.insertCell(2).textContent = '---';
+                row.insertCell(3).textContent = '---';
+                row.insertCell(4).innerHTML = '⏳ Pendiente';
                 row.cells[4].style.color = '#ffc107';
             }
         });
@@ -651,15 +608,15 @@ document.addEventListener('DOMContentLoaded', function() {
         const tbody = document.getElementById('comparison-body-sistemas');
         if (tbody) {
             const orden = ['jacobi', 'gauss-seidel', 'gauss-simple', 'gauss-jordan'];
-            orden.forEach((metodo, idx) => {
-                const row = tbody.children[idx];
-                if (row) {
-                    row.cells[1].textContent = '---';
-                    row.cells[2].textContent = '---';
-                    row.cells[3].textContent = '---';
-                    row.cells[4].innerHTML = '⏳ Pendiente';
-                    row.cells[4].style.color = '#ffc107';
-                }
+            tbody.innerHTML = '';
+            orden.forEach(metodo => {
+                const row = tbody.insertRow();
+                row.insertCell(0).textContent = nombresSistemas[metodo];
+                row.insertCell(1).textContent = '---';
+                row.insertCell(2).textContent = '---';
+                row.insertCell(3).textContent = '---';
+                row.insertCell(4).innerHTML = '⏳ Pendiente';
+                row.cells[4].style.color = '#ffc107';
             });
         }
         document.getElementById('res-solucion').textContent = '---';
@@ -667,69 +624,79 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('res-sis-error').textContent = '---';
     }
     
-    const btnCalcularSistemas = document.getElementById('btn-calcular-sistemas');
-    if (btnCalcularSistemas) {
-        btnCalcularSistemas.addEventListener('click', function() {
-            const metodo = document.querySelector('input[name="metodo-sistemas"]:checked');
-            if (!metodo) return;
-            const metodoValue = metodo.value;
-            const maxIter = 100;
+    document.getElementById('btn-calcular-sistemas').addEventListener('click', function() {
+        const metodo = document.querySelector('input[name="metodo-sistemas"]:checked');
+        if (!metodo) return;
+        const metodoValue = metodo.value;
+        const maxIter = 100;
+        
+        try {
+            let resultado, iteraciones = 1, errorFinal = null;
             
-            try {
-                let resultado, iteraciones = 1, errorFinal = null;
-                
-                if (metodoValue === 'jacobi') {
-                    const A = parseMatrix(document.getElementById('sis-jacobi-A').value);
-                    const b = parseVector(document.getElementById('sis-jacobi-b').value);
-                    const x0 = parseVector(document.getElementById('sis-jacobi-x0').value);
-                    const tol = parseFloat(document.getElementById('sis-jacobi-tol').value);
-                    resultado = metodoJacobi(A, b, x0, tol, maxIter);
-                    iteraciones = resultado.pasos.length;
-                    errorFinal = resultado.pasos[iteraciones - 1]?.error || tol;
-                } else if (metodoValue === 'gauss-seidel') {
-                    const A = parseMatrix(document.getElementById('sis-gs-A').value);
-                    const b = parseVector(document.getElementById('sis-gs-b').value);
-                    const x0 = parseVector(document.getElementById('sis-gs-x0').value);
-                    const tol = parseFloat(document.getElementById('sis-gs-tol').value);
-                    resultado = metodoGaussSeidel(A, b, x0, tol, maxIter);
-                    iteraciones = resultado.pasos.length;
-                    errorFinal = resultado.pasos[iteraciones - 1]?.error || tol;
-                } else if (metodoValue === 'gauss-simple') {
-                    const A = parseMatrix(document.getElementById('sis-gauss-A').value);
-                    const b = parseVector(document.getElementById('sis-gauss-b').value);
-                    resultado = metodoGaussSimple(A, b);
-                    iteraciones = resultado.pasos?.length || 1;
-                    errorFinal = null;
-                } else if (metodoValue === 'gauss-jordan') {
-                    const A = parseMatrix(document.getElementById('sis-gj-A').value);
-                    const b = parseVector(document.getElementById('sis-gj-b').value);
-                    resultado = metodoGaussJordan(A, b);
-                    iteraciones = 1;
-                    errorFinal = null;
-                }
-                
-                const solucion = resultado.solucion;
-                const errorDisplay = (errorFinal && typeof errorFinal === 'number') ? errorFinal.toExponential(4) : 'N/A';
-                
-                document.getElementById('res-solucion').textContent = formatearResultado(solucion);
-                document.getElementById('res-sis-iter').textContent = iteraciones;
-                document.getElementById('res-sis-error').textContent = errorDisplay;
-                
-                guardarResultadoSistema(metodoValue, solucion, iteraciones, errorFinal, true);
-                
-            } catch (e) {
-                console.error(e);
-                document.getElementById('res-solucion').textContent = 'ERROR';
-                document.getElementById('res-sis-error').textContent = e.message;
-                guardarResultadoSistema(metodoValue, null, null, e.message, false);
+            if (metodoValue === 'jacobi') {
+                const A = parseMatrix(document.getElementById('sis-jacobi-A').value);
+                const b = parseVector(document.getElementById('sis-jacobi-b').value);
+                const x0 = parseVector(document.getElementById('sis-jacobi-x0').value);
+                const tol = parseFloat(document.getElementById('sis-jacobi-tol').value);
+                resultado = metodoJacobi(A, b, x0, tol, maxIter);
+                iteraciones = resultado.pasos.length;
+                errorFinal = resultado.pasos[iteraciones - 1]?.error || tol;
+            } else if (metodoValue === 'gauss-seidel') {
+                const A = parseMatrix(document.getElementById('sis-gs-A').value);
+                const b = parseVector(document.getElementById('sis-gs-b').value);
+                const x0 = parseVector(document.getElementById('sis-gs-x0').value);
+                const tol = parseFloat(document.getElementById('sis-gs-tol').value);
+                resultado = metodoGaussSeidel(A, b, x0, tol, maxIter);
+                iteraciones = resultado.pasos.length;
+                errorFinal = resultado.pasos[iteraciones - 1]?.error || tol;
+            } else if (metodoValue === 'gauss-simple') {
+                const A = parseMatrix(document.getElementById('sis-gauss-A').value);
+                const b = parseVector(document.getElementById('sis-gauss-b').value);
+                resultado = metodoGaussSimple(A, b);
+                iteraciones = resultado.pasos?.length || 1;
+                errorFinal = null;
+            } else if (metodoValue === 'gauss-jordan') {
+                const A = parseMatrix(document.getElementById('sis-gj-A').value);
+                const b = parseVector(document.getElementById('sis-gj-b').value);
+                resultado = metodoGaussJordan(A, b);
+                iteraciones = 1;
+                errorFinal = null;
             }
-        });
-    }
+            
+            const solucion = resultado.solucion;
+            const errorDisplay = (errorFinal && typeof errorFinal === 'number') ? errorFinal.toExponential(4) : 'N/A';
+            
+            document.getElementById('res-solucion').textContent = formatearResultado(solucion);
+            document.getElementById('res-sis-iter').textContent = iteraciones;
+            document.getElementById('res-sis-error').textContent = errorDisplay;
+            
+            resultadosSistemas[metodoValue] = {
+                nombre: nombresSistemas[metodoValue],
+                resultado: formatearResultado(solucion),
+                iteraciones: iteraciones,
+                error: errorDisplay,
+                exito: true
+            };
+            actualizarTablaSistemas();
+            
+        } catch (e) {
+            console.error(e);
+            document.getElementById('res-solucion').textContent = 'ERROR';
+            document.getElementById('res-sis-error').textContent = e.message;
+            resultadosSistemas[metodoValue] = {
+                nombre: nombresSistemas[metodoValue],
+                resultado: 'ERROR',
+                iteraciones: '---',
+                error: e.message,
+                exito: false
+            };
+            actualizarTablaSistemas();
+        }
+    });
     
-    const clearSistemas = document.getElementById('clear-sistemas');
-    if (clearSistemas) clearSistemas.addEventListener('click', limpiarSistemas);
+    document.getElementById('clear-sistemas').addEventListener('click', limpiarSistemas);
     
-    // ==================== INICIALIZAR VALORES POR DEFECTO ====================
+    // ==================== INICIALIZAR ====================
     actualizarParametrosRaices();
     actualizarEstiloBotonesRaices();
     actualizarParametrosIntegrales();
@@ -739,7 +706,7 @@ document.addEventListener('DOMContentLoaded', function() {
     actualizarParametrosSistemas();
     actualizarEstiloBotonesSistemas();
     
-    // Inicializar tablas vacías (solo estructura)
+    // Inicializar tablas vacías
     function inicializarTablasVacias() {
         const ordenRaices = ['biseccion', 'regula-falsi', 'newton', 'secante', 'punto-fijo'];
         const tbodyRaices = document.getElementById('comparison-body-raices');
@@ -798,4 +765,4 @@ document.addEventListener('DOMContentLoaded', function() {
     
     inicializarTablasVacias();
     
-}); // Fin de DOMContentLoaded
+});
