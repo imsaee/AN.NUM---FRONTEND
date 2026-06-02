@@ -361,3 +361,18 @@ body {
     .best-method-card { flex-direction: column; text-align: center; }
     .best-method-icon { font-size: 2rem; }
 }
+
+/* Estilos adicionales para inputs grandes de matrices */
+.param-group input[style*="width: 250px"],
+.param-group input[style*="width: 150px"] {
+    width: auto !important;
+    min-width: 150px;
+}
+
+@media (max-width: 768px) {
+    .param-group input[style*="width: 250px"],
+    .param-group input[style*="width: 150px"] {
+        width: 100% !important;
+        min-width: unset;
+    }
+}

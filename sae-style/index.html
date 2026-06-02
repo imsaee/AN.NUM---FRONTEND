@@ -8,18 +8,31 @@
     <link rel="stylesheet" href="style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsxgraph/1.6.0/jsxgraphcore.js"></script>
+    <!-- Métodos de búsqueda de raíces -->
     <script src="../metodos-numericos/biseccion.js"></script>
     <script src="../metodos-numericos/regula-falsi.js"></script>
     <script src="../metodos-numericos/newton.js"></script>
     <script src="../metodos-numericos/secante.js"></script>
     <script src="../metodos-numericos/punto-fijo.js"></script>
+    <!-- Nuevos métodos de integración -->
+    <script src="../metodos-numericos/regla-trapezoidal.js"></script>
+    <script src="../metodos-numericos/regla-trapezoidal-simp.js"></script>
+    <script src="../metodos-numericos/simpson1-3.js"></script>
+    <!-- Nuevos métodos de EDO -->
+    <script src="../metodos-numericos/euler.js"></script>
+    <script src="../metodos-numericos/rk4.js"></script>
+    <!-- Nuevos métodos de sistemas lineales -->
+    <script src="../metodos-numericos/jacobi.js"></script>
+    <script src="../metodos-numericos/gauss-seidel.js"></script>
+    <script src="../metodos-numericos/gauss-simple.js"></script>
+    <script src="../metodos-numericos/gauss-jordan.js"></script>
 </head>
 <body>
 
 <div class="main-container">
     <div class="header">
         <h1>📊 Calculadora Gráfica</h1>
-        <p>Métodos Numéricos para encontrar raíces de funciones</p>
+        <p>Métodos Numéricos para encontrar raíces, integrar, EDOs y sistemas lineales</p>
     </div>
 
     <div class="content">
@@ -33,6 +46,7 @@
         <div class="methods-section">
             <div class="methods-title">Método</div>
             <div class="method-buttons" id="selector-metodos">
+                <!-- Métodos de búsqueda de raíces -->
                 <label class="method-btn active">
                     <input type="radio" name="metodo" value="biseccion" checked> Bisección
                 </label>
@@ -48,84 +62,135 @@
                 <label class="method-btn">
                     <input type="radio" name="metodo" value="punto-fijo"> Punto Fijo
                 </label>
+                <!-- Métodos de integración -->
+                <label class="method-btn">
+                    <input type="radio" name="metodo" value="trapezoidal-simple"> Trapezoidal Simple
+                </label>
+                <label class="method-btn">
+                    <input type="radio" name="metodo" value="trapezoidal-comp"> Trapezoidal Compuesta
+                </label>
+                <label class="method-btn">
+                    <input type="radio" name="metodo" value="simpson13"> Simpson 1/3
+                </label>
+                <!-- Métodos de EDO -->
+                <label class="method-btn">
+                    <input type="radio" name="metodo" value="euler"> Euler
+                </label>
+                <label class="method-btn">
+                    <input type="radio" name="metodo" value="rk4"> Runge-Kutta 4
+                </label>
+                <!-- Métodos de sistemas lineales -->
+                <label class="method-btn">
+                    <input type="radio" name="metodo" value="jacobi"> Jacobi
+                </label>
+                <label class="method-btn">
+                    <input type="radio" name="metodo" value="gauss-seidel"> Gauss-Seidel
+                </label>
+                <label class="method-btn">
+                    <input type="radio" name="metodo" value="gauss-simple"> Gauss Simple
+                </label>
+                <label class="method-btn">
+                    <input type="radio" name="metodo" value="gauss-jordan"> Gauss-Jordan
+                </label>
             </div>
         </div>
 
         <div class="params-panel">
+            <!-- Parámetros para métodos de raíces -->
             <div id="params-biseccion" class="param-panel">
-                <div class="param-group">
-                    <label>a:</label>
-                    <input type="number" id="bis-a" value="-2" step="any">
-                </div>
-                <div class="param-group">
-                    <label>b:</label>
-                    <input type="number" id="bis-b" value="2" step="any">
-                </div>
-                <div class="param-group">
-                    <label>Tolerancia:</label>
-                    <input type="number" id="bis-tol" value="0.0001" step="any">
-                </div>
+                <div class="param-group"><label>a:</label><input type="number" id="bis-a" value="-2" step="any"></div>
+                <div class="param-group"><label>b:</label><input type="number" id="bis-b" value="2" step="any"></div>
+                <div class="param-group"><label>Tolerancia:</label><input type="number" id="bis-tol" value="0.0001" step="any"></div>
             </div>
 
             <div id="params-regula-falsi" class="param-panel" style="display: none;">
-                <div class="param-group">
-                    <label>a:</label>
-                    <input type="number" id="rf-a" value="-2" step="any">
-                </div>
-                <div class="param-group">
-                    <label>b:</label>
-                    <input type="number" id="rf-b" value="2" step="any">
-                </div>
-                <div class="param-group">
-                    <label>Tolerancia:</label>
-                    <input type="number" id="rf-tol" value="0.0001" step="any">
-                </div>
+                <div class="param-group"><label>a:</label><input type="number" id="rf-a" value="-2" step="any"></div>
+                <div class="param-group"><label>b:</label><input type="number" id="rf-b" value="2" step="any"></div>
+                <div class="param-group"><label>Tolerancia:</label><input type="number" id="rf-tol" value="0.0001" step="any"></div>
             </div>
 
             <div id="params-newton" class="param-panel" style="display: none;">
-                <div class="param-group">
-                    <label>x₀:</label>
-                    <input type="number" id="nr-x0" value="-2" step="any">
-                </div>
-                <div class="param-group">
-                    <label>Tolerancia:</label>
-                    <input type="number" id="nr-tol" value="0.0001" step="any">
-                </div>
+                <div class="param-group"><label>x₀:</label><input type="number" id="nr-x0" value="-2" step="any"></div>
+                <div class="param-group"><label>Tolerancia:</label><input type="number" id="nr-tol" value="0.0001" step="any"></div>
             </div>
 
             <div id="params-secante" class="param-panel" style="display: none;">
-                <div class="param-group">
-                    <label>x₀:</label>
-                    <input type="number" id="sc-x0" value="-2" step="any">
-                </div>
-                <div class="param-group">
-                    <label>x₁:</label>
-                    <input type="number" id="sc-x1" value="2" step="any">
-                </div>
-                <div class="param-group">
-                    <label>Tolerancia:</label>
-                    <input type="number" id="sc-tol" value="0.0001" step="any">
-                </div>
+                <div class="param-group"><label>x₀:</label><input type="number" id="sc-x0" value="-2" step="any"></div>
+                <div class="param-group"><label>x₁:</label><input type="number" id="sc-x1" value="2" step="any"></div>
+                <div class="param-group"><label>Tolerancia:</label><input type="number" id="sc-tol" value="0.0001" step="any"></div>
             </div>
 
             <div id="params-punto-fijo" class="param-panel" style="display: none;">
-                <div class="param-group">
-                    <label>x₀:</label>
-                    <input type="number" id="pf-x0" value="-2" step="any">
-                </div>
-                <div class="param-group">
-                    <label>Tolerancia:</label>
-                    <input type="number" id="pf-tol" value="0.0001" step="any">
-                </div>
+                <div class="param-group"><label>x₀:</label><input type="number" id="pf-x0" value="-2" step="any"></div>
+                <div class="param-group"><label>Tolerancia:</label><input type="number" id="pf-tol" value="0.0001" step="any"></div>
+            </div>
+
+            <!-- Parámetros para métodos de integración -->
+            <div id="params-trapezoidal-simple" class="param-panel" style="display: none;">
+                <div class="param-group"><label>a (inicio):</label><input type="number" id="trap-simple-a" value="0" step="any"></div>
+                <div class="param-group"><label>b (fin):</label><input type="number" id="trap-simple-b" value="1" step="any"></div>
+            </div>
+
+            <div id="params-trapezoidal-comp" class="param-panel" style="display: none;">
+                <div class="param-group"><label>a (inicio):</label><input type="number" id="trap-comp-a" value="0" step="any"></div>
+                <div class="param-group"><label>b (fin):</label><input type="number" id="trap-comp-b" value="1" step="any"></div>
+                <div class="param-group"><label>n (subintervalos):</label><input type="number" id="trap-comp-n" value="10" step="1"></div>
+            </div>
+
+            <div id="params-simpson13" class="param-panel" style="display: none;">
+                <div class="param-group"><label>a (inicio):</label><input type="number" id="simp-a" value="0" step="any"></div>
+                <div class="param-group"><label>b (fin):</label><input type="number" id="simp-b" value="1" step="any"></div>
+            </div>
+
+            <!-- Parámetros para métodos de EDO -->
+            <div id="params-euler" class="param-panel" style="display: none;">
+                <div class="param-group"><label>xi (inicio x):</label><input type="number" id="euler-xi" value="0" step="any"></div>
+                <div class="param-group"><label>yi (inicio y):</label><input type="number" id="euler-yi" value="1" step="any"></div>
+                <div class="param-group"><label>xf (fin x):</label><input type="number" id="euler-xf" value="1" step="any"></div>
+                <div class="param-group"><label>dx (paso):</label><input type="number" id="euler-dx" value="0.1" step="any"></div>
+                <div class="param-group"><label>dy/dx =</label><input type="text" id="euler-derivs" value="x + y" style="width: 150px;"></div>
+            </div>
+
+            <div id="params-rk4" class="param-panel" style="display: none;">
+                <div class="param-group"><label>xi (inicio x):</label><input type="number" id="rk4-xi" value="0" step="any"></div>
+                <div class="param-group"><label>yi (inicio y):</label><input type="number" id="rk4-yi" value="1" step="any"></div>
+                <div class="param-group"><label>xf (fin x):</label><input type="number" id="rk4-xf" value="1" step="any"></div>
+                <div class="param-group"><label>dx (paso):</label><input type="number" id="rk4-dx" value="0.1" step="any"></div>
+                <div class="param-group"><label>dy/dx =</label><input type="text" id="rk4-derivs" value="x + y" style="width: 150px;"></div>
+            </div>
+
+            <!-- Parámetros para métodos de sistemas lineales -->
+            <div id="params-jacobi" class="param-panel" style="display: none;">
+                <div class="param-group"><label>Matriz A (ej: 4,-1,1;-1,3,-2;1,-2,5):</label><input type="text" id="jacobi-A" value="4,-1,1;-1,3,-2;1,-2,5" style="width: 250px;"></div>
+                <div class="param-group"><label>Vector b (ej: 8;2;3):</label><input type="text" id="jacobi-b" value="8;2;3" style="width: 150px;"></div>
+                <div class="param-group"><label>x0 (ej: 0;0;0):</label><input type="text" id="jacobi-x0" value="0;0;0" style="width: 150px;"></div>
+                <div class="param-group"><label>Tolerancia:</label><input type="number" id="jacobi-tol" value="0.0001" step="any"></div>
+            </div>
+
+            <div id="params-gauss-seidel" class="param-panel" style="display: none;">
+                <div class="param-group"><label>Matriz A (ej: 4,-1,1;-1,3,-2;1,-2,5):</label><input type="text" id="gs-A" value="4,-1,1;-1,3,-2;1,-2,5" style="width: 250px;"></div>
+                <div class="param-group"><label>Vector b (ej: 8;2;3):</label><input type="text" id="gs-b" value="8;2;3" style="width: 150px;"></div>
+                <div class="param-group"><label>x0 (ej: 0;0;0):</label><input type="text" id="gs-x0" value="0;0;0" style="width: 150px;"></div>
+                <div class="param-group"><label>Tolerancia:</label><input type="number" id="gs-tol" value="0.0001" step="any"></div>
+            </div>
+
+            <div id="params-gauss-simple" class="param-panel" style="display: none;">
+                <div class="param-group"><label>Matriz A (ej: 2,1,-1;-3,-1,2;-2,1,2):</label><input type="text" id="gauss-A" value="2,1,-1;-3,-1,2;-2,1,2" style="width: 250px;"></div>
+                <div class="param-group"><label>Vector b (ej: 8;-11;-3):</label><input type="text" id="gauss-b" value="8;-11;-3" style="width: 150px;"></div>
+            </div>
+
+            <div id="params-gauss-jordan" class="param-panel" style="display: none;">
+                <div class="param-group"><label>Matriz A (ej: 2,1,-1;-3,-1,2;-2,1,2):</label><input type="text" id="gj-A" value="2,1,-1;-3,-1,2;-2,1,2" style="width: 250px;"></div>
+                <div class="param-group"><label>Vector b (ej: 8;-11;-3):</label><input type="text" id="gj-b" value="8;-11;-3" style="width: 150px;"></div>
             </div>
         </div>
 
-        <button id="btn-calcular" class="calculate-btn">🚀 CALCULAR RAÍZ</button>
+        <button id="btn-calcular" class="calculate-btn">🚀 CALCULAR</button>
 
         <div class="results-section">
             <div class="results-grid">
                 <div class="result-card">
-                    <div class="result-label">🎯 Raíz encontrada</div>
+                    <div class="result-label">🎯 Resultado</div>
                     <div class="result-value" id="res-raiz">---</div>
                 </div>
                 <div class="result-card">
@@ -133,7 +198,7 @@
                     <div class="result-value" id="res-iter">---</div>
                 </div>
                 <div class="result-card">
-                    <div class="result-label">📐 Error final</div>
+                    <div class="result-label">📐 Error/Tolerancia</div>
                     <div class="result-value" id="res-error">---</div>
                 </div>
             </div>
@@ -143,14 +208,10 @@
             <div class="comparison-title">📊 Comparación de Métodos</div>
             <table class="comparison-table" id="comparison-table">
                 <thead>
-                    <tr><th>Método</th><th>Raíz</th><th>Iteraciones</th><th>Error</th><th>Estado</th></tr>
+                    <tr><th>Método</th><th>Resultado</th><th>Iteraciones</th><th>Error</th><th>Estado</th></tr>
                 </thead>
                 <tbody id="comparison-body">
-                    <tr><td>Bisección</td><td>---</td><td>---</td><td>---</td><td>⏳ Pendiente</td></tr>
-                    <tr><td>Regula Falsi</td><td>---</td><td>---</td><td>---</td><td>⏳ Pendiente</td></tr>
-                    <tr><td>Newton-Raphson</td><td>---</td><td>---</td><td>---</td><td>⏳ Pendiente</td></tr>
-                    <tr><td>Secante</td><td>---</td><td>---</td><td>---</td><td>⏳ Pendiente</td></tr>
-                    <tr><td>Punto Fijo</td><td>---</td><td>---</td><td>---</td><td>⏳ Pendiente</td></tr>
+                    <!-- Las filas se generarán dinámicamente -->
                 </tbody>
             </table>
             <div class="comparison-actions">
