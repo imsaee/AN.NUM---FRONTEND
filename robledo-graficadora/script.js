@@ -1,5 +1,5 @@
 // ── PANEL SWITCHING ──────────────────────────────────────────────────────────
-const panelesRaices = ['biseccion', 'regula-falsi', 'newton', 'secante', 'punto-fijo'];
+const panelesRaices = ['biseccion', 'regula-falsi', 'newton', 'secante', 'punto-fijo', 'regla-trapezoidal', 'regla-trapezoidal-simple', 'simpson1-3', 'simpson38', 'euler-modular', 'rk4-modular'];
 const panelesMatriciales = ['gauss-simple', 'gauss-jordan', 'jacobi', 'gauss-seidel'];
 const paneles = [...panelesRaices, ...panelesMatriciales];
 
@@ -125,6 +125,62 @@ document.getElementById('btn-calcular').addEventListener('click', () => {
                 const g      = x => math.evaluate(funcStr, { x });
                 resultado    = metodoPuntoFijo(g, x0, tol, maxIter);
             }
+                else if (metodo === 'regla-trapezoidal') {
+                funcStr      = document.getElementById('func').value;
+                const a      = parseFloat(document.getElementById('trap-a').value);
+                const b      = parseFloat(document.getElementById('trap-b').value);
+                const n      = parseInt(document.getElementById('trap-n').value);
+                const f      = x => math.evaluate(funcStr, { x });
+                resultado    = reglaTrapezoidalComp(a, b, n, f);
+            }
+                else if (metodo === 'regla-trapezoidal-simple') {
+                funcStr      = document.getElementById('func').value;
+                const a      = parseFloat(document.getElementById('trap-simple-a').value);
+                const b      = parseFloat(document.getElementById('trap-simple-b').value);
+                const f      = x => math.evaluate(funcStr, { x });
+                resultado    = reglaTrapezoidalSimple(a, b, f);
+            }
+                else if (metodo === 'simpson1-3') {
+                funcStr      = document.getElementById('func').value;
+                const a      = parseFloat(document.getElementById('simpson-a').value);
+                const b      = parseFloat(document.getElementById('simpson-b').value);  
+                const f      = x => math.evaluate(funcStr, { x });
+                resultado    = reglaSimpson13Simple(a, b, f);
+            } 
+             
+                else if (metodo === 'euler-modular') {
+                funcStr      = document.getElementById('func').value;
+                const xi     = parseFloat(document.getElementById('euler-xi').value);
+                const yi     = parseFloat(document.getElementById('euler-yi').value);
+                const xf     = parseFloat(document.getElementById('euler-xf').value);
+                const dx     = parseFloat(document.getElementById('euler-dx').value);
+                const xout   = parseFloat(document.getElementById('euler-xout').value);
+                const derivs = (x, y) => math.evaluate(funcStr, { x, y });
+                resultado    = metodoEulerModular(xi, yi, xf, dx, xout, derivs);
+            } 
+            else if (metodo === 'rk4-modular') {
+                funcStr      = document.getElementById('func').value; 
+                const xi     = parseFloat(document.getElementById('rk4-xi').value);
+                const xf     = parseFloat(document.getElementById('rk4-xf').value);
+                const dx     = parseFloat(document.getElementById('rk4-dx').value);
+                const xout   = parseFloat(document.getElementById('rk4-xout').value);
+
+                // Capturamos las condiciones iniciales permitiendo sistemas acoplados (ej: "1, 0")
+                const yiStr  = document.getElementById('rk4-yi').value;
+                const yiArray = yiStr.split(',').map(v => parseFloat(v.trim()));
+
+                // El evaluador derivs maneja el sistema de ecuaciones. Si ingresas una única ecuación,
+                // math.js la evaluará pasando el primer elemento del arreglo y[0].
+                const derivs = (x, y) => {
+                    // Si es un sistema complejo podés parsear funciones separadas por comas, 
+                    // pero para una EDO estándar f(x,y) o sistema simple:
+                    let resEval = math.evaluate(funcStr, { x: x, y: y[0] });
+                    return Array.isArray(resEval) ? resEval : [resEval];
+                };
+
+                resultado    = metodoRK4Modular(xi, yiArray, xf, dx, xout, derivs);
+            }
+                
 
             const { raiz, pasos } = resultado;
             const errorFinal = pasos[pasos.length - 1].error;

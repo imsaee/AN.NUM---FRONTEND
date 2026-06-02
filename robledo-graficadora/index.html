@@ -17,6 +17,11 @@
     <script src="../metodos-numericos/gauss-jordan.js"></script>
     <script src="../metodos-numericos/jacobi.js"></script>
     <script src="../metodos-numericos/gauss-seidel.js"></script>
+    <script src="../metodos-numericos/regla-trapezoidal-simp.js"></script>
+    <script src="../metodos-numericos/regla-trapezoidal.js"></script>
+    <script src="../metodos-numericos/simpson1-3.js"></script>
+    <script src="../metodos-numericos/euler.js"></script>
+    <script src="../metodos-numericos/rk4.js"></script>
 </head>
 <body>
 
@@ -35,6 +40,12 @@
         <label><input type="radio" name="metodo" value="gauss-jordan"> Gauss Jordan</label>
         <label><input type="radio" name="metodo" value="jacobi"> Jacobi</label>
         <label><input type="radio" name="metodo" value="gauss-seidel"> Gauss Seidel</label>
+        <label><input type="radio" name="metodo" value="regla-trapezoidal-simple"> Trapezoidal Simple</label>
+        <label><input type="radio" name="metodo" value="regla-trapezoidal"> Regla Trapezoidal Compuesta</label>
+        <label><input type="radio" name="metodo" value="simpson1-3"> Regla de Simpson 1/3</label>
+        <label><input type="radio" name="metodo" value="euler-modular"> Método de Euler EDO's</label>
+        <label><input type="radio" name="metodo" value="rk4-modular"> Runge-Kutta 4 (EDOs)</label>
+        
     </div>
 
     <div id="params-biseccion">
@@ -65,6 +76,39 @@
         <p>Tolerancia: <input type="number" id="pf-tol" value="0.0001" step="any"></p>
     </div>
 
+      <div id="params-regla-trapezoidal-simple" hidden>
+        <p>Límite inferior (a): <input type="number" id="trap-simple-a" value="0"></p>
+        <p>Límite superior (b): <input type="number" id="trap-simple-b" value="2"></p>
+    </div>
+
+    <div id="params-regla-trapezoidal" hidden>
+        <p>Límite inferior (a): <input type="number" id="trap-a" value="0"></p>
+        <p>Límite superior (b): <input type="number" id="trap-b" value="2"></p>
+        <p>Subintervalos (n): <input type="number" id="trap-n" value="4" step="1"></p>
+    </div>
+
+    <div id="params-simpson1-3" hidden>
+        <p>Límite inferior (a): <input type="number" id="simpson-a" value="0"></p>
+        <p>Límite superior (b): <input type="number" id="simpson-b" value="2"></p>
+    </div>
+
+   
+    <div id="params-euler-modular" hidden>
+        <p>xi (Punto inicial X): <input type="number" id="euler-xi" value="0"></p>
+        <p>yi (Condición inicial Y): <input type="number" id="euler-yi" value="1"></p>
+        <p>xf (Punto final X): <input type="number" id="euler-xf" value="2"></p>
+        <p>dx (Tamaño del paso): <input type="number" id="euler-dx" value="0.5" step="any"></p>
+        <p>xout (Intervalo de salida): <input type="number" id="euler-xout" value="0.5" step="any"></p>
+    </div>
+
+    <div id="params-rk4-modular" hidden>
+        <p>xi (Punto inicial X): <input type="number" id="rk4-xi" value="0"></p>
+        <p>yi (Condición inicial Y. Si es sistema separar por comas): <input type="text" id="rk4-yi" value="1"></p>
+        <p>xf (Punto final X): <input type="number" id="rk4-xf" value="2"></p>
+        <p>dx (Tamaño del paso): <input type="number" id="rk4-dx" value="0.5" step="any"></p>
+        <p>xout (Intervalo de salida): <input type="number" id="rk4-xout" value="0.5" step="any"></p>
+    </div>
+
     <div id="params-matriciales" hidden>
         <p>Tamaño del sistema (N x N): 
             <input type="number" id="mat-n" value="3" min="2" max="6" style="width: 50px;">
@@ -75,6 +119,7 @@
             <p>X0 inicial (separado por comas): <input type="text" id="mat-x0" value="0,0,0"></p>
         </div>
     </div>
+
 
     <div id="display-resultado">
         <p>Resultado / Raíz:<br><strong id="res-raiz">---</strong></p>
