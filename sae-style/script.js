@@ -216,7 +216,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!metodo) return;
         const metodoValue = metodo.value;
         const maxIter = 100;
-        const funcStr = document.getElementById('func-raices').value;
+        const funcStr = getMathValue('func-raices');
         const f = x => math.evaluate(funcStr, { x });
         
         try {
@@ -363,7 +363,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const metodo = document.querySelector('input[name="metodo-integrales"]:checked');
         if (!metodo) return;
         const metodoValue = metodo.value;
-        const funcStr = document.getElementById('func-integrales').value;
+        const funcStr = getMathValue('func-integrales');
         const f = x => math.evaluate(funcStr, { x });
         
         try {
@@ -492,7 +492,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const metodo = document.querySelector('input[name="metodo-edo"]:checked');
         if (!metodo) return;
         const metodoValue = metodo.value;
-        const derivsStr = document.getElementById('func-edo').value;
+        const derivsStr = getMathValue('func-edo');
         
         try {
             let resultado;

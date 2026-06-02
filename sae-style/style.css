@@ -131,6 +131,27 @@ body {
     box-shadow: 0 0 0 3px rgba(196, 69, 54, 0.1);
 }
 
+math-field.function-input {
+    display: block;
+    border: 2px solid #197278;
+    border-radius: 8px;
+    background: white;
+    font-size: 1.1rem;
+    padding: 6px 10px;
+    width: 100%;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+math-field.function-input:focus-within {
+    border-color: #c44536;
+    box-shadow: 0 0 0 3px rgba(196, 69, 54, 0.1);
+}
+
+math-field.function-input::part(menu-toggle) {
+    display: none;
+}
+
 .methods-section { margin-bottom: 20px; }
 .methods-title { 
     font-size: 0.9rem; 
