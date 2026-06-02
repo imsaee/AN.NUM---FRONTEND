@@ -31,11 +31,17 @@ function actualizarEstiloBotones() {
     }
 }
 
-document.querySelectorAll('input[name="metodo"]').forEach(radio => {
-    radio.addEventListener('change', () => {
-        actualizarParametros();
-        actualizarEstiloBotones();
+// Esperar a que el DOM esté listo para agregar eventos
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('input[name="metodo"]').forEach(radio => {
+        radio.addEventListener('change', () => {
+            actualizarParametros();
+            actualizarEstiloBotones();
+        });
     });
+    actualizarParametros();
+    actualizarEstiloBotones();
+    inicializarTablaVacia();
 });
 
 // ── JSXGRAPH ─────────────────────────────────────────────────────────────────
@@ -79,6 +85,13 @@ const nombresMetodos = {
     'gauss-jordan': 'Gauss-Jordan'
 };
 
+const ordenMetodos = [
+    'biseccion', 'regula-falsi', 'newton', 'secante', 'punto-fijo',
+    'trapezoidal-simple', 'trapezoidal-comp', 'simpson13',
+    'euler', 'rk4',
+    'jacobi', 'gauss-seidel', 'gauss-simple', 'gauss-jordan'
+];
+
 function guardarResultadoEnTabla(metodo, resultado, iteraciones, error, exito) {
     resultadosGuardados[metodo] = {
         nombre: nombresMetodos[metodo],
@@ -90,7 +103,6 @@ function guardarResultadoEnTabla(metodo, resultado, iteraciones, error, exito) {
         errorNum: typeof error === 'number' ? error : Infinity
     };
     
-    // Actualizar la tabla completa
     actualizarTablaCompleta();
 }
 
@@ -98,18 +110,8 @@ function actualizarTablaCompleta() {
     const tbody = document.getElementById('comparison-body');
     if (!tbody) return;
     
-    // Limpiar tabla
     tbody.innerHTML = '';
     
-    // Orden de métodos predefinido
-    const orden = [
-        'biseccion', 'regula-falsi', 'newton', 'secante', 'punto-fijo',
-        'trapezoidal-simple', 'trapezoidal-comp', 'simpson13',
-        'euler', 'rk4',
-        'jacobi', 'gauss-seidel', 'gauss-simple', 'gauss-jordan'
-    ];
-    
-    // Determinar el mejor método (menor error, solo si existe errorNum)
     let mejorMetodo = null;
     let menorError = Infinity;
     
@@ -120,8 +122,7 @@ function actualizarTablaCompleta() {
         }
     }
     
-    // Llenar tabla en el orden establecido
-    orden.forEach(metodo => {
+    ordenMetodos.forEach(metodo => {
         const res = resultadosGuardados[metodo];
         const row = tbody.insertRow();
         
@@ -146,7 +147,6 @@ function actualizarTablaCompleta() {
         }
     });
     
-    // Mostrar/ocultar tarjeta del mejor método
     const bestSection = document.getElementById('best-method-section');
     const bestName = document.getElementById('best-method-name');
     const bestDetails = document.getElementById('best-method-details');
@@ -163,17 +163,18 @@ function actualizarTablaCompleta() {
 
 function limpiarComparacion() {
     resultadosGuardados = {};
+    actualizarTablaCompleta();
+    document.getElementById('best-method-section').style.display = 'none';
+    document.getElementById('res-raiz').textContent = '---';
+    document.getElementById('res-iter').textContent = '---';
+    document.getElementById('res-error').textContent = '---';
+}
+
+function inicializarTablaVacia() {
     const tbody = document.getElementById('comparison-body');
     if (tbody) {
         tbody.innerHTML = '';
-        // Regenerar tabla vacía
-        const orden = [
-            'biseccion', 'regula-falsi', 'newton', 'secante', 'punto-fijo',
-            'trapezoidal-simple', 'trapezoidal-comp', 'simpson13',
-            'euler', 'rk4',
-            'jacobi', 'gauss-seidel', 'gauss-simple', 'gauss-jordan'
-        ];
-        orden.forEach(metodo => {
+        ordenMetodos.forEach(metodo => {
             const row = tbody.insertRow();
             row.insertCell(0).textContent = nombresMetodos[metodo];
             row.insertCell(1).textContent = '---';
@@ -183,10 +184,6 @@ function limpiarComparacion() {
             row.cells[4].style.color = '#ffc107';
         });
     }
-    document.getElementById('best-method-section').style.display = 'none';
-    document.getElementById('res-raiz').textContent = '---';
-    document.getElementById('res-iter').textContent = '---';
-    document.getElementById('res-error').textContent = '---';
 }
 
 // ── PARSER PARA SISTEMAS LINEALES ───────────────────────────────────────────
@@ -196,6 +193,16 @@ function parseMatrix(str) {
 
 function parseVector(str) {
     return str.split(';').map(Number);
+}
+
+// ── OBTENER VALOR DEL RESULTADO (maneja diferentes estructuras) ──────────────
+function obtenerValorResultado(resultado) {
+    if (!resultado) return null;
+    if (resultado.raiz !== undefined) return resultado.raiz;
+    if (resultado.solucion !== undefined) return resultado.solucion;
+    if (resultado.resultado !== undefined) return resultado.resultado;
+    if (typeof resultado === 'number') return resultado;
+    return resultado;
 }
 
 // ── CALCULAR ────────────────────────────────────────────────────────────────
@@ -212,41 +219,41 @@ document.getElementById('btn-calcular').addEventListener('click', () => {
 
         // ── MÉTODOS DE RAÍCES ────────────────────────────────────────────────
         if (metodo === 'biseccion') {
-            resultado = metodoBiseccion(f, 
-                parseFloat(document.getElementById('bis-a').value),
-                parseFloat(document.getElementById('bis-b').value),
-                parseFloat(document.getElementById('bis-tol').value), maxIter);
+            const a = parseFloat(document.getElementById('bis-a').value);
+            const b = parseFloat(document.getElementById('bis-b').value);
+            const tol = parseFloat(document.getElementById('bis-tol').value);
+            resultado = metodoBiseccion(f, a, b, tol, maxIter);
             iteraciones = resultado.pasos.length;
             errorFinal = resultado.pasos[iteraciones - 1].error;
             
         } else if (metodo === 'regula-falsi') {
-            resultado = metodoRegulaFalsi(f,
-                parseFloat(document.getElementById('rf-a').value),
-                parseFloat(document.getElementById('rf-b').value),
-                parseFloat(document.getElementById('rf-tol').value), maxIter);
+            const a = parseFloat(document.getElementById('rf-a').value);
+            const b = parseFloat(document.getElementById('rf-b').value);
+            const tol = parseFloat(document.getElementById('rf-tol').value);
+            resultado = metodoRegulaFalsi(f, a, b, tol, maxIter);
             iteraciones = resultado.pasos.length;
             errorFinal = resultado.pasos[iteraciones - 1].error;
             
         } else if (metodo === 'newton') {
+            const x0 = parseFloat(document.getElementById('nr-x0').value);
+            const tol = parseFloat(document.getElementById('nr-tol').value);
             const df = x => math.derivative(funcStr, 'x').evaluate({ x });
-            resultado = metodoNewton(f, df,
-                parseFloat(document.getElementById('nr-x0').value),
-                parseFloat(document.getElementById('nr-tol').value), maxIter);
+            resultado = metodoNewton(f, df, x0, tol, maxIter);
             iteraciones = resultado.pasos.length;
             errorFinal = resultado.pasos[iteraciones - 1].error;
             
         } else if (metodo === 'secante') {
-            resultado = metodoSecante(f,
-                parseFloat(document.getElementById('sc-x0').value),
-                parseFloat(document.getElementById('sc-x1').value),
-                parseFloat(document.getElementById('sc-tol').value), maxIter);
+            const x0 = parseFloat(document.getElementById('sc-x0').value);
+            const x1 = parseFloat(document.getElementById('sc-x1').value);
+            const tol = parseFloat(document.getElementById('sc-tol').value);
+            resultado = metodoSecante(f, x0, x1, tol, maxIter);
             iteraciones = resultado.pasos.length;
             errorFinal = resultado.pasos[iteraciones - 1].error;
             
         } else if (metodo === 'punto-fijo') {
-            resultado = metodoPuntoFijo(f,
-                parseFloat(document.getElementById('pf-x0').value),
-                parseFloat(document.getElementById('pf-tol').value), maxIter);
+            const x0 = parseFloat(document.getElementById('pf-x0').value);
+            const tol = parseFloat(document.getElementById('pf-tol').value);
+            resultado = metodoPuntoFijo(f, x0, tol, maxIter);
             iteraciones = resultado.pasos.length;
             errorFinal = resultado.pasos[iteraciones - 1].error;
             
@@ -255,8 +262,8 @@ document.getElementById('btn-calcular').addEventListener('click', () => {
             const a = parseFloat(document.getElementById('trap-simple-a').value);
             const b = parseFloat(document.getElementById('trap-simple-b').value);
             resultado = reglaTrapezoidalSimple(a, b, f);
-            iteraciones = resultado.pasos.length;
-            errorFinal = 1e-10; // Error muy pequeño para integración exacta
+            iteraciones = 1;
+            errorFinal = 1e-12;
             
         } else if (metodo === 'trapezoidal-comp') {
             const a = parseFloat(document.getElementById('trap-comp-a').value);
@@ -264,14 +271,14 @@ document.getElementById('btn-calcular').addEventListener('click', () => {
             const n = parseInt(document.getElementById('trap-comp-n').value);
             resultado = reglaTrapezoidalComp(a, b, n, f);
             iteraciones = n;
-            errorFinal = 1e-10;
+            errorFinal = 1e-12;
             
         } else if (metodo === 'simpson13') {
             const a = parseFloat(document.getElementById('simp-a').value);
             const b = parseFloat(document.getElementById('simp-b').value);
             resultado = reglaSimpson13Simple(a, b, f);
-            iteraciones = resultado.pasos.length;
-            errorFinal = 1e-10;
+            iteraciones = 1;
+            errorFinal = 1e-12;
             
         // ── MÉTODOS DE EDO ───────────────────────────────────────────────────
         } else if (metodo === 'euler') {
@@ -281,9 +288,9 @@ document.getElementById('btn-calcular').addEventListener('click', () => {
             const dx = parseFloat(document.getElementById('euler-dx').value);
             const derivsStr = document.getElementById('euler-derivs').value;
             const derivs = (x, y) => math.evaluate(derivsStr, { x, y });
-            resultado = metodoEulerModular(xi, yi, xf, dx, 0.1, derivs);
+            resultado = metodoEulerModular(xi, yi, xf, dx, dx, derivs);
             iteraciones = resultado.pasos.length;
-            errorFinal = 1e-10;
+            errorFinal = 1e-12;
             
         } else if (metodo === 'rk4') {
             const xi = parseFloat(document.getElementById('rk4-xi').value);
@@ -297,9 +304,9 @@ document.getElementById('btn-calcular').addEventListener('click', () => {
                 }
                 return math.evaluate(derivsStr, { x, y });
             };
-            resultado = metodoRK4Modular(xi, [yi], xf, dx, 0.1, derivs);
+            resultado = metodoRK4Modular(xi, [yi], xf, dx, dx, derivs);
             iteraciones = resultado.pasos.length;
-            errorFinal = 1e-10;
+            errorFinal = 1e-12;
             
         // ── MÉTODOS DE SISTEMAS LINEALES ─────────────────────────────────────
         } else if (metodo === 'jacobi') {
@@ -325,26 +332,22 @@ document.getElementById('btn-calcular').addEventListener('click', () => {
             const b = parseVector(document.getElementById('gauss-b').value);
             resultado = metodoGaussSimple(A, b);
             iteraciones = resultado.pasos?.length || 1;
-            errorFinal = 1e-10;
+            errorFinal = 1e-12;
             
         } else if (metodo === 'gauss-jordan') {
             const A = parseMatrix(document.getElementById('gj-A').value);
             const b = parseVector(document.getElementById('gj-b').value);
             resultado = metodoGaussJordan(A, b);
             iteraciones = 1;
-            errorFinal = 1e-10;
+            errorFinal = 1e-12;
         }
 
         // Extraer el valor a mostrar
-        let valorMostrar;
-        if (resultado.raiz !== undefined) valorMostrar = resultado.raiz;
-        else if (resultado.solucion !== undefined) valorMostrar = resultado.solucion;
-        else if (resultado.resultado !== undefined) valorMostrar = resultado.resultado;
-        else valorMostrar = resultado;
+        const valorMostrar = obtenerValorResultado(resultado);
 
         document.getElementById('res-raiz').textContent = formatearResultado(valorMostrar);
         document.getElementById('res-iter').textContent = iteraciones;
-        document.getElementById('res-error').textContent = (typeof errorFinal === 'number' && errorFinal !== 1e-10) ? errorFinal.toExponential(4) : '≈ 0';
+        document.getElementById('res-error').textContent = (typeof errorFinal === 'number' && errorFinal > 1e-10) ? errorFinal.toExponential(4) : '≈ 0';
 
         guardarResultadoEnTabla(metodo, valorMostrar, iteraciones, errorFinal, true);
 
@@ -364,8 +367,9 @@ document.getElementById('btn-calcular').addEventListener('click', () => {
         }
 
     } catch (e) {
-        console.error(e);
+        console.error('Error:', e);
         document.getElementById('res-raiz').textContent = 'ERROR';
+        document.getElementById('res-iter').textContent = '---';
         document.getElementById('res-error').textContent = e.message;
         guardarResultadoEnTabla(metodo, null, null, e.message, false);
     }
@@ -377,35 +381,7 @@ document.getElementById('compare-all').addEventListener('click', () => {
         alert('⚠️ No hay resultados. Calcula al menos un método.');
         return;
     }
-    // Solo actualizar la tabla para mostrar el mejor método resaltado
     actualizarTablaCompleta();
 });
 
 document.getElementById('clear-comparison').addEventListener('click', limpiarComparacion);
-
-// ── INICIALIZAR TABLA VACÍA ─────────────────────────────────────────────────
-function inicializarTablaVacia() {
-    const tbody = document.getElementById('comparison-body');
-    if (tbody && tbody.children.length === 0) {
-        const orden = [
-            'biseccion', 'regula-falsi', 'newton', 'secante', 'punto-fijo',
-            'trapezoidal-simple', 'trapezoidal-comp', 'simpson13',
-            'euler', 'rk4',
-            'jacobi', 'gauss-seidel', 'gauss-simple', 'gauss-jordan'
-        ];
-        orden.forEach(metodo => {
-            const row = tbody.insertRow();
-            row.insertCell(0).textContent = nombresMetodos[metodo];
-            row.insertCell(1).textContent = '---';
-            row.insertCell(2).textContent = '---';
-            row.insertCell(3).textContent = '---';
-            row.insertCell(4).innerHTML = '⏳ Pendiente';
-            row.cells[4].style.color = '#ffc107';
-        });
-    }
-}
-
-// ── INICIALIZAR ────────────────────────────────────────────────────────────
-actualizarParametros();
-actualizarEstiloBotones();
-inicializarTablaVacia();
