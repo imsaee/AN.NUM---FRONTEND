@@ -403,4 +403,5 @@ body {
     .results-grid { grid-template-columns: 1fr; gap: 10px; }
     .param-group input { width: 100%; }
     .comparison-table { font-size: 0.7rem; }
-    .comparison-table th, .comparison
+    .comparison-table th, .comparison table td { padding: 6px; }
+}
