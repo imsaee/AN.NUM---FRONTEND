@@ -12,6 +12,7 @@ Herramienta de análisis numérico con graficadora interactiva.
 |-------|-----------|--------|---------|
 | 2026-05-31 | `robledo-graficadora` | `823c2f5` — Consola de diagnóstico con historial (`consola.js`) | [ver →](docs/823c2f5.md) |
 | 2026-05-31 | `sae-style` | `fcad045` — Se integraron métodos y se creó una versión final (`index.html`, `script.js`,`style.css`) | [ver →](docs/fcad045.md) |
+| 2026-06-02 | `robledo-graficadora` | `42f82c85a9372b4b0137d9bf861cae5b6df149cb` — Eliminación del método Simpson 3/8 por redundancia y metodos trapecio, Simpson1/3, euler y rk4 | [ver →](docs/42f82c85a9372b4b0137d9bf861cae5b6df149cb.md) |
 
 ### Marco de trabajo — cómo documentar un cambio
 
