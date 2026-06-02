@@ -92,15 +92,39 @@ const ordenMetodos = [
     'jacobi', 'gauss-seidel', 'gauss-simple', 'gauss-jordan'
 ];
 
+// Métodos que SÍ tienen error real (iterativos)
+const metodosConErrorReal = [
+    'biseccion', 'regula-falsi', 'newton', 'secante', 'punto-fijo',
+    'jacobi', 'gauss-seidel'
+];
+
 function guardarResultadoEnTabla(metodo, resultado, iteraciones, error, exito) {
+    // Determinar si el error es válido para comparación
+    const tieneErrorReal = metodosConErrorReal.includes(metodo);
+    let errorMostrar = '---';
+    let errorNum = Infinity;
+    
+    if (!exito) {
+        errorMostrar = error || 'Error';
+        errorNum = Infinity;
+    } else if (tieneErrorReal && typeof error === 'number' && !isNaN(error)) {
+        errorMostrar = error.toExponential(4);
+        errorNum = error;
+    } else if (!tieneErrorReal) {
+        errorMostrar = 'N/A';
+        errorNum = Infinity;
+    } else {
+        errorMostrar = '---';
+        errorNum = Infinity;
+    }
+    
     resultadosGuardados[metodo] = {
         nombre: nombresMetodos[metodo],
         resultado: formatearResultado(resultado),
         iteraciones: iteraciones || '---',
-        error: (error && typeof error === 'number') ? error.toExponential(4) : (error || '---'),
+        error: errorMostrar,
         exito: exito,
-        valorNum: typeof resultado === 'number' ? resultado : null,
-        errorNum: typeof error === 'number' ? error : Infinity
+        errorNum: errorNum
     };
     
     actualizarTablaCompleta();
@@ -112,11 +136,14 @@ function actualizarTablaCompleta() {
     
     tbody.innerHTML = '';
     
+    // Encontrar el mejor método SOLO entre los que tienen error real
     let mejorMetodo = null;
     let menorError = Infinity;
     
     for (const [metodo, res] of Object.entries(resultadosGuardados)) {
-        if (res.exito && typeof res.errorNum === 'number' && res.errorNum < menorError && res.errorNum !== Infinity && !isNaN(res.errorNum)) {
+        if (res.exito && metodosConErrorReal.includes(metodo) && 
+            typeof res.errorNum === 'number' && res.errorNum < menorError && 
+            res.errorNum !== Infinity && !isNaN(res.errorNum)) {
             menorError = res.errorNum;
             mejorMetodo = metodo;
         }
@@ -154,10 +181,18 @@ function actualizarTablaCompleta() {
     if (mejorMetodo && menorError !== Infinity && !isNaN(menorError)) {
         const mejor = resultadosGuardados[mejorMetodo];
         bestSection.style.display = 'block';
-        bestName.textContent = mejor.nombre;
+        bestName.textContent = `🏆 ${mejor.nombre}`;
         bestDetails.innerHTML = `Error: ${menorError.toExponential(4)} | Iteraciones: ${mejor.iteraciones} | Resultado: ${mejor.resultado}`;
     } else {
-        bestSection.style.display = 'none';
+        // Verificar si hay algún método exitoso (aunque no tenga error real)
+        const hayExitos = Object.values(resultadosGuardados).some(r => r.exito);
+        if (hayExitos) {
+            bestSection.style.display = 'block';
+            bestName.textContent = '📊 Métodos calculados';
+            bestDetails.innerHTML = 'Los métodos de integración, EDO y eliminación directa no calculan error. Revisa los resultados en la tabla.';
+        } else {
+            bestSection.style.display = 'none';
+        }
     }
 }
 
@@ -213,11 +248,11 @@ document.getElementById('btn-calcular').addEventListener('click', () => {
     try {
         let resultado = null;
         let iteraciones = 0;
-        let errorFinal = 0;
+        let errorFinal = null;
         let funcStr = document.getElementById('func').value;
         const f = x => math.evaluate(funcStr, { x });
 
-        // ── MÉTODOS DE RAÍCES ────────────────────────────────────────────────
+        // ── MÉTODOS DE RAÍCES (tienen error real) ────────────────────────────
         if (metodo === 'biseccion') {
             const a = parseFloat(document.getElementById('bis-a').value);
             const b = parseFloat(document.getElementById('bis-b').value);
@@ -257,13 +292,13 @@ document.getElementById('btn-calcular').addEventListener('click', () => {
             iteraciones = resultado.pasos.length;
             errorFinal = resultado.pasos[iteraciones - 1].error;
             
-        // ── MÉTODOS DE INTEGRACIÓN ───────────────────────────────────────────
+        // ── MÉTODOS DE INTEGRACIÓN (NO tienen error real) ─────────────────────
         } else if (metodo === 'trapezoidal-simple') {
             const a = parseFloat(document.getElementById('trap-simple-a').value);
             const b = parseFloat(document.getElementById('trap-simple-b').value);
             resultado = reglaTrapezoidalSimple(a, b, f);
             iteraciones = 1;
-            errorFinal = 1e-12;
+            errorFinal = null; // N/A
             
         } else if (metodo === 'trapezoidal-comp') {
             const a = parseFloat(document.getElementById('trap-comp-a').value);
@@ -271,16 +306,16 @@ document.getElementById('btn-calcular').addEventListener('click', () => {
             const n = parseInt(document.getElementById('trap-comp-n').value);
             resultado = reglaTrapezoidalComp(a, b, n, f);
             iteraciones = n;
-            errorFinal = 1e-12;
+            errorFinal = null;
             
         } else if (metodo === 'simpson13') {
             const a = parseFloat(document.getElementById('simp-a').value);
             const b = parseFloat(document.getElementById('simp-b').value);
             resultado = reglaSimpson13Simple(a, b, f);
             iteraciones = 1;
-            errorFinal = 1e-12;
+            errorFinal = null;
             
-        // ── MÉTODOS DE EDO ───────────────────────────────────────────────────
+        // ── MÉTODOS DE EDO (NO tienen error real estándar) ────────────────────
         } else if (metodo === 'euler') {
             const xi = parseFloat(document.getElementById('euler-xi').value);
             const yi = parseFloat(document.getElementById('euler-yi').value);
@@ -290,7 +325,7 @@ document.getElementById('btn-calcular').addEventListener('click', () => {
             const derivs = (x, y) => math.evaluate(derivsStr, { x, y });
             resultado = metodoEulerModular(xi, yi, xf, dx, dx, derivs);
             iteraciones = resultado.pasos.length;
-            errorFinal = 1e-12;
+            errorFinal = null;
             
         } else if (metodo === 'rk4') {
             const xi = parseFloat(document.getElementById('rk4-xi').value);
@@ -306,9 +341,9 @@ document.getElementById('btn-calcular').addEventListener('click', () => {
             };
             resultado = metodoRK4Modular(xi, [yi], xf, dx, dx, derivs);
             iteraciones = resultado.pasos.length;
-            errorFinal = 1e-12;
+            errorFinal = null;
             
-        // ── MÉTODOS DE SISTEMAS LINEALES ─────────────────────────────────────
+        // ── MÉTODOS DE SISTEMAS LINEALES ITERATIVOS (tienen error real) ───────
         } else if (metodo === 'jacobi') {
             const A = parseMatrix(document.getElementById('jacobi-A').value);
             const b = parseVector(document.getElementById('jacobi-b').value);
@@ -327,27 +362,36 @@ document.getElementById('btn-calcular').addEventListener('click', () => {
             iteraciones = resultado.pasos.length;
             errorFinal = resultado.pasos[iteraciones - 1]?.error || tol;
             
+        // ── MÉTODOS DE SISTEMAS LINEALES DIRECTOS (NO tienen error real) ──────
         } else if (metodo === 'gauss-simple') {
             const A = parseMatrix(document.getElementById('gauss-A').value);
             const b = parseVector(document.getElementById('gauss-b').value);
             resultado = metodoGaussSimple(A, b);
             iteraciones = resultado.pasos?.length || 1;
-            errorFinal = 1e-12;
+            errorFinal = null;
             
         } else if (metodo === 'gauss-jordan') {
             const A = parseMatrix(document.getElementById('gj-A').value);
             const b = parseVector(document.getElementById('gj-b').value);
             resultado = metodoGaussJordan(A, b);
             iteraciones = 1;
-            errorFinal = 1e-12;
+            errorFinal = null;
         }
 
         // Extraer el valor a mostrar
         const valorMostrar = obtenerValorResultado(resultado);
 
+        // Mostrar error en la interfaz
+        let errorDisplay = '---';
+        if (errorFinal !== null && typeof errorFinal === 'number' && !isNaN(errorFinal)) {
+            errorDisplay = errorFinal.toExponential(4);
+        } else if (errorFinal === null) {
+            errorDisplay = 'N/A';
+        }
+
         document.getElementById('res-raiz').textContent = formatearResultado(valorMostrar);
         document.getElementById('res-iter').textContent = iteraciones;
-        document.getElementById('res-error').textContent = (typeof errorFinal === 'number' && errorFinal > 1e-10) ? errorFinal.toExponential(4) : '≈ 0';
+        document.getElementById('res-error').textContent = errorDisplay;
 
         guardarResultadoEnTabla(metodo, valorMostrar, iteraciones, errorFinal, true);
 
