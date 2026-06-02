@@ -52,6 +52,7 @@ let puntoRaiz = null;
 
 // ── FUNCIÓN PARA FORMATEAR RESULTADO ─────────────────────────────────────────
 function formatearResultado(valor) {
+    if (valor === undefined || valor === null) return '---';
     if (typeof valor === 'number') return valor.toFixed(6);
     if (Array.isArray(valor)) return `[${valor.map(v => v.toFixed(6)).join(', ')}]`;
     return String(valor);
@@ -60,93 +61,97 @@ function formatearResultado(valor) {
 // ── ALMACENAMIENTO DE RESULTADOS ───────────────────────────────────────────
 let resultadosGuardados = {};
 
+// ── LISTA DE MÉTODOS CON SUS NOMBRES ────────────────────────────────────────
+const nombresMetodos = {
+    'biseccion': 'Bisección',
+    'regula-falsi': 'Regula Falsi',
+    'newton': 'Newton-Raphson',
+    'secante': 'Secante',
+    'punto-fijo': 'Punto Fijo',
+    'trapezoidal-simple': 'Trapezoidal Simple',
+    'trapezoidal-comp': 'Trapezoidal Compuesta',
+    'simpson13': 'Simpson 1/3',
+    'euler': 'Euler',
+    'rk4': 'Runge-Kutta 4',
+    'jacobi': 'Jacobi',
+    'gauss-seidel': 'Gauss-Seidel',
+    'gauss-simple': 'Gauss Simple',
+    'gauss-jordan': 'Gauss-Jordan'
+};
+
 function guardarResultadoEnTabla(metodo, resultado, iteraciones, error, exito) {
-    const nombresMetodos = {
-        'biseccion': 'Bisección',
-        'regula-falsi': 'Regula Falsi',
-        'newton': 'Newton-Raphson',
-        'secante': 'Secante',
-        'punto-fijo': 'Punto Fijo',
-        'trapezoidal-simple': 'Trapezoidal Simple',
-        'trapezoidal-comp': 'Trapezoidal Compuesta',
-        'simpson13': 'Simpson 1/3',
-        'euler': 'Euler',
-        'rk4': 'Runge-Kutta 4',
-        'jacobi': 'Jacobi',
-        'gauss-seidel': 'Gauss-Seidel',
-        'gauss-simple': 'Gauss Simple',
-        'gauss-jordan': 'Gauss-Jordan'
-    };
-    
     resultadosGuardados[metodo] = {
         nombre: nombresMetodos[metodo],
         resultado: formatearResultado(resultado),
         iteraciones: iteraciones || '---',
-        error: error ? (typeof error === 'number' ? error.toExponential(4) : error) : '---',
+        error: (error && typeof error === 'number') ? error.toExponential(4) : (error || '---'),
         exito: exito,
         valorNum: typeof resultado === 'number' ? resultado : null,
         errorNum: typeof error === 'number' ? error : Infinity
     };
     
-    actualizarTablaSinMejor();
+    // Actualizar la tabla completa
+    actualizarTablaCompleta();
 }
 
-function actualizarTablaSinMejor() {
+function actualizarTablaCompleta() {
     const tbody = document.getElementById('comparison-body');
     if (!tbody) return;
     
-    // Limpiar y regenerar tabla
+    // Limpiar tabla
     tbody.innerHTML = '';
     
-    for (const [metodo, res] of Object.entries(resultadosGuardados)) {
-        const row = tbody.insertRow();
-        row.insertCell(0).textContent = res.nombre;
-        row.insertCell(1).textContent = res.resultado;
-        row.insertCell(2).textContent = res.iteraciones;
-        row.insertCell(3).textContent = res.error;
-        row.insertCell(4).innerHTML = res.exito ? '✅ Éxito' : '❌ Error';
-        row.cells[4].style.color = res.exito ? '#28a745' : '#dc3545';
-    }
+    // Orden de métodos predefinido
+    const orden = [
+        'biseccion', 'regula-falsi', 'newton', 'secante', 'punto-fijo',
+        'trapezoidal-simple', 'trapezoidal-comp', 'simpson13',
+        'euler', 'rk4',
+        'jacobi', 'gauss-seidel', 'gauss-simple', 'gauss-jordan'
+    ];
     
-    document.getElementById('best-method-section').style.display = 'none';
-}
-
-function mostrarComparacion() {
-    const tbody = document.getElementById('comparison-body');
-    if (!tbody) return;
-    
+    // Determinar el mejor método (menor error, solo si existe errorNum)
     let mejorMetodo = null;
     let menorError = Infinity;
     
     for (const [metodo, res] of Object.entries(resultadosGuardados)) {
-        if (res.exito && typeof res.errorNum === 'number' && res.errorNum < menorError && res.errorNum !== Infinity) {
+        if (res.exito && typeof res.errorNum === 'number' && res.errorNum < menorError && res.errorNum !== Infinity && !isNaN(res.errorNum)) {
             menorError = res.errorNum;
             mejorMetodo = metodo;
         }
     }
     
-    // Reconstruir tabla con resaltado
-    tbody.innerHTML = '';
-    
-    for (const [metodo, res] of Object.entries(resultadosGuardados)) {
+    // Llenar tabla en el orden establecido
+    orden.forEach(metodo => {
+        const res = resultadosGuardados[metodo];
         const row = tbody.insertRow();
-        row.insertCell(0).textContent = res.nombre;
-        row.insertCell(1).textContent = res.resultado;
-        row.insertCell(2).textContent = res.iteraciones;
-        row.insertCell(3).textContent = res.error;
-        row.insertCell(4).innerHTML = res.exito ? '✅ Éxito' : '❌ Error';
-        row.cells[4].style.color = res.exito ? '#28a745' : '#dc3545';
         
-        if (mejorMetodo === metodo) {
-            row.classList.add('best-result');
+        if (res) {
+            row.insertCell(0).textContent = res.nombre;
+            row.insertCell(1).textContent = res.resultado;
+            row.insertCell(2).textContent = res.iteraciones;
+            row.insertCell(3).textContent = res.error;
+            row.insertCell(4).innerHTML = res.exito ? '✅ Éxito' : '❌ Error';
+            row.cells[4].style.color = res.exito ? '#28a745' : '#dc3545';
+            
+            if (mejorMetodo === metodo) {
+                row.classList.add('best-result');
+            }
+        } else {
+            row.insertCell(0).textContent = nombresMetodos[metodo];
+            row.insertCell(1).textContent = '---';
+            row.insertCell(2).textContent = '---';
+            row.insertCell(3).textContent = '---';
+            row.insertCell(4).innerHTML = '⏳ Pendiente';
+            row.cells[4].style.color = '#ffc107';
         }
-    }
+    });
     
+    // Mostrar/ocultar tarjeta del mejor método
     const bestSection = document.getElementById('best-method-section');
     const bestName = document.getElementById('best-method-name');
     const bestDetails = document.getElementById('best-method-details');
     
-    if (mejorMetodo && menorError !== Infinity) {
+    if (mejorMetodo && menorError !== Infinity && !isNaN(menorError)) {
         const mejor = resultadosGuardados[mejorMetodo];
         bestSection.style.display = 'block';
         bestName.textContent = mejor.nombre;
@@ -161,6 +166,22 @@ function limpiarComparacion() {
     const tbody = document.getElementById('comparison-body');
     if (tbody) {
         tbody.innerHTML = '';
+        // Regenerar tabla vacía
+        const orden = [
+            'biseccion', 'regula-falsi', 'newton', 'secante', 'punto-fijo',
+            'trapezoidal-simple', 'trapezoidal-comp', 'simpson13',
+            'euler', 'rk4',
+            'jacobi', 'gauss-seidel', 'gauss-simple', 'gauss-jordan'
+        ];
+        orden.forEach(metodo => {
+            const row = tbody.insertRow();
+            row.insertCell(0).textContent = nombresMetodos[metodo];
+            row.insertCell(1).textContent = '---';
+            row.insertCell(2).textContent = '---';
+            row.insertCell(3).textContent = '---';
+            row.insertCell(4).innerHTML = '⏳ Pendiente';
+            row.cells[4].style.color = '#ffc107';
+        });
     }
     document.getElementById('best-method-section').style.display = 'none';
     document.getElementById('res-raiz').textContent = '---';
@@ -235,7 +256,7 @@ document.getElementById('btn-calcular').addEventListener('click', () => {
             const b = parseFloat(document.getElementById('trap-simple-b').value);
             resultado = reglaTrapezoidalSimple(a, b, f);
             iteraciones = resultado.pasos.length;
-            errorFinal = 0;
+            errorFinal = 1e-10; // Error muy pequeño para integración exacta
             
         } else if (metodo === 'trapezoidal-comp') {
             const a = parseFloat(document.getElementById('trap-comp-a').value);
@@ -243,14 +264,14 @@ document.getElementById('btn-calcular').addEventListener('click', () => {
             const n = parseInt(document.getElementById('trap-comp-n').value);
             resultado = reglaTrapezoidalComp(a, b, n, f);
             iteraciones = n;
-            errorFinal = 0;
+            errorFinal = 1e-10;
             
         } else if (metodo === 'simpson13') {
             const a = parseFloat(document.getElementById('simp-a').value);
             const b = parseFloat(document.getElementById('simp-b').value);
             resultado = reglaSimpson13Simple(a, b, f);
             iteraciones = resultado.pasos.length;
-            errorFinal = 0;
+            errorFinal = 1e-10;
             
         // ── MÉTODOS DE EDO ───────────────────────────────────────────────────
         } else if (metodo === 'euler') {
@@ -262,7 +283,7 @@ document.getElementById('btn-calcular').addEventListener('click', () => {
             const derivs = (x, y) => math.evaluate(derivsStr, { x, y });
             resultado = metodoEulerModular(xi, yi, xf, dx, 0.1, derivs);
             iteraciones = resultado.pasos.length;
-            errorFinal = 0;
+            errorFinal = 1e-10;
             
         } else if (metodo === 'rk4') {
             const xi = parseFloat(document.getElementById('rk4-xi').value);
@@ -278,7 +299,7 @@ document.getElementById('btn-calcular').addEventListener('click', () => {
             };
             resultado = metodoRK4Modular(xi, [yi], xf, dx, 0.1, derivs);
             iteraciones = resultado.pasos.length;
-            errorFinal = 0;
+            errorFinal = 1e-10;
             
         // ── MÉTODOS DE SISTEMAS LINEALES ─────────────────────────────────────
         } else if (metodo === 'jacobi') {
@@ -288,7 +309,7 @@ document.getElementById('btn-calcular').addEventListener('click', () => {
             const tol = parseFloat(document.getElementById('jacobi-tol').value);
             resultado = metodoJacobi(A, b, x0, tol, maxIter);
             iteraciones = resultado.pasos.length;
-            errorFinal = resultado.pasos[iteraciones - 1]?.error || 0;
+            errorFinal = resultado.pasos[iteraciones - 1]?.error || tol;
             
         } else if (metodo === 'gauss-seidel') {
             const A = parseMatrix(document.getElementById('gs-A').value);
@@ -297,21 +318,21 @@ document.getElementById('btn-calcular').addEventListener('click', () => {
             const tol = parseFloat(document.getElementById('gs-tol').value);
             resultado = metodoGaussSeidel(A, b, x0, tol, maxIter);
             iteraciones = resultado.pasos.length;
-            errorFinal = resultado.pasos[iteraciones - 1]?.error || 0;
+            errorFinal = resultado.pasos[iteraciones - 1]?.error || tol;
             
         } else if (metodo === 'gauss-simple') {
             const A = parseMatrix(document.getElementById('gauss-A').value);
             const b = parseVector(document.getElementById('gauss-b').value);
             resultado = metodoGaussSimple(A, b);
             iteraciones = resultado.pasos?.length || 1;
-            errorFinal = 0;
+            errorFinal = 1e-10;
             
         } else if (metodo === 'gauss-jordan') {
             const A = parseMatrix(document.getElementById('gj-A').value);
             const b = parseVector(document.getElementById('gj-b').value);
             resultado = metodoGaussJordan(A, b);
             iteraciones = 1;
-            errorFinal = 0;
+            errorFinal = 1e-10;
         }
 
         // Extraer el valor a mostrar
@@ -323,12 +344,14 @@ document.getElementById('btn-calcular').addEventListener('click', () => {
 
         document.getElementById('res-raiz').textContent = formatearResultado(valorMostrar);
         document.getElementById('res-iter').textContent = iteraciones;
-        document.getElementById('res-error').textContent = typeof errorFinal === 'number' ? errorFinal.toExponential(4) : '---';
+        document.getElementById('res-error').textContent = (typeof errorFinal === 'number' && errorFinal !== 1e-10) ? errorFinal.toExponential(4) : '≈ 0';
 
         guardarResultadoEnTabla(metodo, valorMostrar, iteraciones, errorFinal, true);
 
-        // Actualizar gráfica solo para funciones que devuelven un número
-        if (typeof valorMostrar === 'number' && metodo !== 'trapezoidal-simple' && metodo !== 'trapezoidal-comp' && metodo !== 'simpson13') {
+        // Actualizar gráfica solo para métodos de raíces
+        if (typeof valorMostrar === 'number' && 
+            (metodo === 'biseccion' || metodo === 'regula-falsi' || metodo === 'newton' || 
+             metodo === 'secante' || metodo === 'punto-fijo')) {
             if (curva) board.removeObject(curva);
             if (puntoRaiz) board.removeObject(puntoRaiz);
             
@@ -341,6 +364,7 @@ document.getElementById('btn-calcular').addEventListener('click', () => {
         }
 
     } catch (e) {
+        console.error(e);
         document.getElementById('res-raiz').textContent = 'ERROR';
         document.getElementById('res-error').textContent = e.message;
         guardarResultadoEnTabla(metodo, null, null, e.message, false);
@@ -353,11 +377,35 @@ document.getElementById('compare-all').addEventListener('click', () => {
         alert('⚠️ No hay resultados. Calcula al menos un método.');
         return;
     }
-    mostrarComparacion();
+    // Solo actualizar la tabla para mostrar el mejor método resaltado
+    actualizarTablaCompleta();
 });
 
 document.getElementById('clear-comparison').addEventListener('click', limpiarComparacion);
 
+// ── INICIALIZAR TABLA VACÍA ─────────────────────────────────────────────────
+function inicializarTablaVacia() {
+    const tbody = document.getElementById('comparison-body');
+    if (tbody && tbody.children.length === 0) {
+        const orden = [
+            'biseccion', 'regula-falsi', 'newton', 'secante', 'punto-fijo',
+            'trapezoidal-simple', 'trapezoidal-comp', 'simpson13',
+            'euler', 'rk4',
+            'jacobi', 'gauss-seidel', 'gauss-simple', 'gauss-jordan'
+        ];
+        orden.forEach(metodo => {
+            const row = tbody.insertRow();
+            row.insertCell(0).textContent = nombresMetodos[metodo];
+            row.insertCell(1).textContent = '---';
+            row.insertCell(2).textContent = '---';
+            row.insertCell(3).textContent = '---';
+            row.insertCell(4).innerHTML = '⏳ Pendiente';
+            row.cells[4].style.color = '#ffc107';
+        });
+    }
+}
+
 // ── INICIALIZAR ────────────────────────────────────────────────────────────
 actualizarParametros();
 actualizarEstiloBotones();
+inicializarTablaVacia();
